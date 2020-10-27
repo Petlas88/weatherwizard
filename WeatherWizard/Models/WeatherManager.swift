@@ -2,8 +2,6 @@
 //  Weathermanager.swift
 //  WeatherWizard
 //
-//  Created by Lasse Pettersen on 26/10/2020.
-//
 
 import Foundation
 
@@ -12,9 +10,8 @@ struct WeatherManager {
     
     func fetchWeather(lat: Double, lon: Double)  {
         
-//        lat=59.911166&lon=10.744810
         let urlString = "\(weatherUrl)lat=\(lat)&lon=\(lon)"
-        print(urlString)
+        performRequest(urlString: urlString)
     }
     
     func performRequest(urlString:String)  {
@@ -23,9 +20,39 @@ struct WeatherManager {
             
             let session = URLSession(configuration: .default)
             
-           let task = session.dataTask(with: url, completionHandler: <#T##(Data?, URLResponse?, Error?) -> Void#>)
+            let task = session.dataTask(with: url) { (data, response, error) in
+                if error != nil {
+                    print(error!)
+                    return
+                }
+                
+                if let safeData = data {
+                    //Needed the self. notation in the past, seems to be working fine without it now (Swift 5, Xcode 12.1)
+                    parseJSON(weatherData: safeData)
+                }
+            }
             
             task.resume()
         }
     }
+    
+    func parseJSON(weatherData: Data) {
+        let decoder = JSONDecoder()
+        
+        
+        do {
+           let decodedData = try decoder.decode(WeatherData.self, from: weatherData)
+            print("Instant")
+            print(decodedData.properties.timeseries[1].data.instant.details.air_temperature)
+            print("******")
+            print("Rain next 6h")
+            
+        
+        } catch {
+            print(error)
+        }
+        
+    }
+    
+    
 }
