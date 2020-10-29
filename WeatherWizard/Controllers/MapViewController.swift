@@ -10,21 +10,15 @@ import MapKit
 class MapViewController: UIViewController{
     
     var userLocation = CLLocation(latitude: 0.0, longitude: 0.0)
-    var pinLocation = CLLocation(latitude: 0.0, longitude: 0.0)
-    
-    
-    
-    
+    var pinLocation: CLLocation? = nil
     
     @IBOutlet weak var mapView: MKMapView!
     @IBOutlet weak var locationSwitch: UISwitch!
     
-    
     var weatherManager = WeatherManager()
     var forecastViewController = ForecastViewController()
     var locationManager = CLLocationManager()
-    let longTapGesture = UILongPressGestureRecognizer(target: self, action: #selector(longPress))
-    
+ 
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -33,6 +27,7 @@ class MapViewController: UIViewController{
         locationManager.delegate = self
         
         mapView.showsUserLocation = true
+        let longTapGesture = UILongPressGestureRecognizer(target: self, action: #selector(longPress))
         mapView.addGestureRecognizer(longTapGesture)
         
         locationManager.desiredAccuracy = kCLLocationAccuracyBest
@@ -50,6 +45,7 @@ class MapViewController: UIViewController{
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
+        
         let tabbar = tabBarController as! MainTabBarController
         tabbar.tabBarLat = userLocation.coordinate.latitude
         tabbar.tabBarLon = userLocation.coordinate.longitude
@@ -58,14 +54,16 @@ class MapViewController: UIViewController{
     @IBAction func locationSwitchToggled(_ sender: UISwitch) {
         if !locationSwitch.isOn {
             panToLocation(userLocation)
-          
-            
+            let annotations = mapView.annotations.filter({ !($0 is MKUserLocation) })
+            mapView.removeAnnotations(annotations)
         } else {
-            
-         
+            if pinLocation == nil {
+                pinLocation = userLocation
+            }
+            addAnnotation(location: CLLocationCoordinate2D(latitude: pinLocation!.coordinate.latitude, longitude: pinLocation!.coordinate.longitude))
         }
-        mapView.showsUserLocation = !locationSwitch.isOn
         
+        mapView.showsUserLocation = !locationSwitch.isOn
     }
 }
 
@@ -80,8 +78,6 @@ extension MapViewController: CLLocationManagerDelegate {
 extension MapViewController: MKMapViewDelegate {
     
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        
-        print(type(of: locations.first))
         if let location = locations.first {
                         
             locationManager.stopUpdatingLocation()
