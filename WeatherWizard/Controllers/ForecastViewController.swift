@@ -11,8 +11,7 @@ class ForecastViewController: UIViewController {
     
     var forecasts: [Forecast] = []
     
-    var currentLat: CLLocationDegrees = 0.0
-    var currentLon: CLLocationDegrees = 0.0
+    var showingLocalWeather = false
     
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var locationLabel: UILabel!
@@ -33,11 +32,11 @@ class ForecastViewController: UIViewController {
         tableView.register(UINib(nibName: K.cellNibName, bundle: nil), forCellReuseIdentifier: K.cellIdentifier)
         
         let tabbar = tabBarController as! MainTabBarController
-        //        Calling fetchWeather here to not update everytime view appears. Also checking if user has fetched current location. Will not fetch weather if that's the case
-        if currentLat != tabbar.tabBarLat, currentLon != tabbar.tabBarLon {
-            currentLat = 59.911166
-            currentLon = 10.744810
-            weatherManager.fetchWeather(lat: currentLat, lon: currentLon)
+        //        Calling fetchWeather here to not update everytime view appears.
+//        Also checking if user has fetched current location (lat/lon from tab bar == nil). Will not fetch weather if that's the case
+        if tabbar.tabBarLat == nil, tabbar.tabBarLon == nil {
+            weatherManager.fetchWeather(lat: 59.911166, lon: 10.744810)
+            locationLabel.text = "Høyskolen Kristiania"
         }
         
     }
@@ -47,16 +46,14 @@ class ForecastViewController: UIViewController {
         
         let tabbar = tabBarController as! MainTabBarController
         //        Weather should not be fetched if coordinate from map is allready shown or if coordinates in MainTabBarController == nil
-        if tabbar.tabBarLat != currentLat, tabbar.tabBarLon != currentLon, tabbar.tabBarLat != nil, tabbar.tabBarLon != nil {
-            
+        if tabbar.tabBarLat != nil, tabbar.tabBarLon != nil, !showingLocalWeather {
             forecasts = []
-            currentLat = tabbar.tabBarLat!
-            currentLon = tabbar.tabBarLon!
-            weatherManager.fetchWeather(lat: currentLat, lon: currentLon)
+            showingLocalWeather = true
+            weatherManager.fetchWeather(lat: tabbar.tabBarLat! , lon: tabbar.tabBarLon!)
             
             DispatchQueue.main.async {
                 self.locationLabel.text = "Din lokasjon"
-                self.coordinatesLabel.text = "\(self.currentLat), \(self.currentLon)"
+                self.coordinatesLabel.text = "\(tabbar.tabBarLat!), \(tabbar.tabBarLon!)"
                 self.tableView.reloadData()
             }
         }

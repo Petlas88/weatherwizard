@@ -214,18 +214,27 @@
                             <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" mapType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="lvd-tf-UbH">
                                 <rect key="frame" x="0.0" y="88" width="414" height="725"/>
                             </mapView>
+                            <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="cEq-XK-aBa">
+                                <rect key="frame" x="335" y="118" width="51" height="31"/>
+                                <connections>
+                                    <action selector="locationSwitchToggled:" destination="PeM-GX-23D" eventType="valueChanged" id="Pqh-iw-4yB"/>
+                                </connections>
+                            </switch>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="Qqp-Ch-Luz"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
                             <constraint firstItem="Qqp-Ch-Luz" firstAttribute="bottom" secondItem="lvd-tf-UbH" secondAttribute="bottom" id="7gq-5y-AeQ"/>
+                            <constraint firstItem="cEq-XK-aBa" firstAttribute="top" secondItem="Qqp-Ch-Luz" secondAttribute="top" constant="30" id="GT1-5G-rRF"/>
                             <constraint firstItem="Qqp-Ch-Luz" firstAttribute="trailing" secondItem="lvd-tf-UbH" secondAttribute="trailing" id="M9X-ed-pEe"/>
                             <constraint firstItem="lvd-tf-UbH" firstAttribute="leading" secondItem="Qqp-Ch-Luz" secondAttribute="leading" id="aq8-e7-bS1"/>
+                            <constraint firstItem="Qqp-Ch-Luz" firstAttribute="trailing" secondItem="cEq-XK-aBa" secondAttribute="trailing" constant="30" id="c1J-gE-G8P"/>
                             <constraint firstItem="lvd-tf-UbH" firstAttribute="top" secondItem="Qqp-Ch-Luz" secondAttribute="top" id="he7-yt-Tes"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" title="Kart" id="U90-GI-AS4"/>
                     <connections>
+                        <outlet property="locationSwitch" destination="cEq-XK-aBa" id="i2X-sq-ZOD"/>
                         <outlet property="mapView" destination="lvd-tf-UbH" id="Xgu-du-5Ln"/>
                     </connections>
                 </viewController>

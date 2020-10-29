@@ -9,18 +9,21 @@ import MapKit
 
 class MapViewController: UIViewController{
     
-    var lat: CLLocationDegrees = 0.0
-    var lon: CLLocationDegrees = 0.0
+    var userLocation = CLLocation(latitude: 0.0, longitude: 0.0)
+    var pinLocation = CLLocation(latitude: 0.0, longitude: 0.0)
+    
     
     
     
     
     @IBOutlet weak var mapView: MKMapView!
+    @IBOutlet weak var locationSwitch: UISwitch!
     
     
     var weatherManager = WeatherManager()
     var forecastViewController = ForecastViewController()
     var locationManager = CLLocationManager()
+    let longTapGesture = UILongPressGestureRecognizer(target: self, action: #selector(longPress))
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -30,27 +33,40 @@ class MapViewController: UIViewController{
         locationManager.delegate = self
         
         mapView.showsUserLocation = true
-        
-        let longTapGesture = UILongPressGestureRecognizer(target: self, action: #selector(longPress))
         mapView.addGestureRecognizer(longTapGesture)
         
         locationManager.desiredAccuracy = kCLLocationAccuracyBest
         locationManager.requestWhenInUseAuthorization()
+        locationManager.startUpdatingLocation()
+        
+        locationSwitch.isOn = false
+       
     }
     
-    override func viewDidAppear(_ animated: Bool) {
-        //        Want to get position everytime the view appears
-        locationManager.startUpdatingLocation()
-    }
+//    override func viewDidAppear(_ animated: Bool) {
+//        //        Want to get position everytime the view appears
+//
+//    }
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         let tabbar = tabBarController as! MainTabBarController
-        tabbar.tabBarLat = lat
-        tabbar.tabBarLon = lon
+        tabbar.tabBarLat = userLocation.coordinate.latitude
+        tabbar.tabBarLon = userLocation.coordinate.longitude
     }
     
-    
+    @IBAction func locationSwitchToggled(_ sender: UISwitch) {
+        if !locationSwitch.isOn {
+            panToLocation(userLocation)
+          
+            
+        } else {
+            
+         
+        }
+        mapView.showsUserLocation = !locationSwitch.isOn
+        
+    }
 }
 
 //MARK: - CLLocationManagerDelegate
@@ -67,13 +83,11 @@ extension MapViewController: MKMapViewDelegate {
         
         print(type(of: locations.first))
         if let location = locations.first {
-            
-            lon = location.coordinate.longitude
-            lat =  location.coordinate.latitude
-            
+                        
             locationManager.stopUpdatingLocation()
-            
             panToLocation(location)
+            userLocation = location
+            
         }
     }
     
@@ -86,24 +100,31 @@ extension MapViewController: MKMapViewDelegate {
     }
     
     @objc func longPress(sender: UIGestureRecognizer) {
-       
-        if sender.state == .began {
-            let locationInView = sender.location(in: mapView)
-            let locationOnMap = mapView.convert(locationInView, toCoordinateFrom: mapView)
-            addAnnotation(location: locationOnMap)
+        if locationSwitch.isOn  {
+            if sender.state == .began {
+                let locationInView = sender.location(in: mapView)
+                let locationOnMap = mapView.convert(locationInView, toCoordinateFrom: mapView)
+                addAnnotation(location: locationOnMap)
+            }
+        } else {
+            return
         }
     }
     
     func addAnnotation(location: CLLocationCoordinate2D){
         
+        let annotations = mapView.annotations.filter({ !($0 is MKUserLocation) })
+        mapView.removeAnnotations(annotations)
+        
         let annotation = MKPointAnnotation()
         annotation.coordinate = location
         annotation.title = "\(annotation.coordinate.latitude) \(annotation.coordinate.longitude)"
-        self.mapView.addAnnotation(annotation)
+        mapView.addAnnotation(annotation)
         
         let convertedLocation = CLLocation(latitude: annotation.coordinate.latitude, longitude: annotation.coordinate.longitude)
         
         panToLocation(convertedLocation)
+        pinLocation = convertedLocation
     }
     
     func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
