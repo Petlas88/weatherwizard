@@ -1,62 +1,112 @@
+// This file was generated from JSON Schema using quicktype, do not modify it directly.
+// To parse the JSON, add this file to your project and do:
 //
-//  WeatherModel.swift
-//  WeatherWizard
-//
-
+//   let weatherData = try? newJSONDecoder().decode(WeatherData.self, from: jsonData)
 
 import Foundation
 
+// MARK: - WeatherData
 struct WeatherData: Codable {
+    let geometry: Geometry
     let properties: Properties
 }
 
+// MARK: - Geometry
+struct Geometry: Codable {
+    let coordinates: [Double]
+}
+
+// MARK: - Properties
 struct Properties: Codable {
-    let timeseries: [Timeseries]
+    let meta: Meta
+    let timeseries: [Timesery]
 }
 
-struct Timeseries: Codable {
-    let data: DataModel
+// MARK: - Meta
+struct Meta: Codable {
+    let updatedAt: String
+    let units: Units
+    
+    enum CodingKeys: String, CodingKey {
+        case updatedAt = "updated_at"
+        case units
+    }
 }
 
-struct DataModel: Codable {
+// MARK: - Units
+struct Units: Codable {
+    let  airTemperature, precipitationAmount: String
+    
+    enum CodingKeys: String, CodingKey {
+        case airTemperature = "air_temperature"
+        case precipitationAmount = "precipitation_amount"
+    }
+}
+
+// MARK: - Timesery
+struct Timesery: Codable {
+    let data: DataClass
+}
+
+// MARK: - DataClass
+struct DataClass: Codable {
     let instant: Instant
-    let next_12_hours: Next12Hours
-    let next_1_hours: Next1Hours
-    let next_6_hours: Next6Hours
+    let next12Hours: Next12Hours?
+    let next1Hours, next6Hours: NextHours?
+    
+    enum CodingKeys: String, CodingKey {
+        case instant
+        case next12Hours = "next_12_hours"
+        case next1Hours = "next_1_hours"
+        case next6Hours = "next_6_hours"
+    }
 }
 
+// MARK: - Instant
 struct Instant: Codable {
     let details: InstantDetails
 }
 
+// MARK: - InstantDetails
 struct InstantDetails: Codable {
-    let air_temperature: Double
+    let airPressureAtSeaLevel: Double
+    let cloudAreaFraction, relativeHumidity, windFromDirection, windSpeed, airTemperature: Double
+    
+    enum CodingKeys: String, CodingKey {
+        case airPressureAtSeaLevel = "air_pressure_at_sea_level"
+        case airTemperature = "air_temperature"
+        case cloudAreaFraction = "cloud_area_fraction"
+        case relativeHumidity = "relative_humidity"
+        case windFromDirection = "wind_from_direction"
+        case windSpeed = "wind_speed"
+    }
 }
 
+// MARK: - Next12Hours
 struct Next12Hours: Codable {
     let summary: Summary
 }
 
-struct Next1Hours: Codable {
-    let summary: Summary
-    let details: NextDetails
-}
-
-struct Next6Hours: Codable {
-    let summary: Summary
-    let details: NextDetails
-    
-}
-
+// MARK: - Summary
 struct Summary: Codable {
-    let symbol_code: String
+    let symbolCode: String
+    
+    enum CodingKeys: String, CodingKey {
+        case symbolCode = "symbol_code"
+    }
 }
 
-struct NextDetails: Codable {
-    let precipitation_amount: Double
+// MARK: - NextHours
+struct NextHours: Codable {
+    let summary: Summary
+    let details: NextHoursDetails
 }
 
-
-
-
-//properties.timeseries[0].data.instant.details.air_temperature
+// MARK: - NextHoursDetails
+struct NextHoursDetails: Codable {
+    let precipitationAmount: Double
+    
+    enum CodingKeys: String, CodingKey {
+        case precipitationAmount = "precipitation_amount"
+    }
+}

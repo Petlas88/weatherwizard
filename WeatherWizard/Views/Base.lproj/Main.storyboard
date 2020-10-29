@@ -9,10 +9,10 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
-        <!--Tab Bar Controller-->
+        <!--Main Tab Bar Controller-->
         <scene sceneID="oxz-i9-zNa">
             <objects>
-                <tabBarController id="7FY-Pu-gqa" sceneMemberID="viewController">
+                <tabBarController id="7FY-Pu-gqa" customClass="MainTabBarController" customModule="WeatherWizard" customModuleProvider="target" sceneMemberID="viewController">
                     <tabBar key="tabBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="FGe-3P-NCM">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="49"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -212,19 +212,22 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" mapType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="lvd-tf-UbH">
-                                <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                                <rect key="frame" x="0.0" y="88" width="414" height="725"/>
                             </mapView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="Qqp-Ch-Luz"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
-                            <constraint firstItem="lvd-tf-UbH" firstAttribute="top" secondItem="IrH-dw-y74" secondAttribute="top" id="Hio-Ew-5tb"/>
-                            <constraint firstItem="lvd-tf-UbH" firstAttribute="leading" secondItem="Qqp-Ch-Luz" secondAttribute="leading" id="WWP-g2-Ars"/>
-                            <constraint firstAttribute="bottom" secondItem="lvd-tf-UbH" secondAttribute="bottom" id="gO7-a5-KDL"/>
-                            <constraint firstItem="lvd-tf-UbH" firstAttribute="trailing" secondItem="Qqp-Ch-Luz" secondAttribute="trailing" id="jpy-bh-t5u"/>
+                            <constraint firstItem="Qqp-Ch-Luz" firstAttribute="bottom" secondItem="lvd-tf-UbH" secondAttribute="bottom" id="7gq-5y-AeQ"/>
+                            <constraint firstItem="Qqp-Ch-Luz" firstAttribute="trailing" secondItem="lvd-tf-UbH" secondAttribute="trailing" id="M9X-ed-pEe"/>
+                            <constraint firstItem="lvd-tf-UbH" firstAttribute="leading" secondItem="Qqp-Ch-Luz" secondAttribute="leading" id="aq8-e7-bS1"/>
+                            <constraint firstItem="lvd-tf-UbH" firstAttribute="top" secondItem="Qqp-Ch-Luz" secondAttribute="top" id="he7-yt-Tes"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" title="Kart" id="U90-GI-AS4"/>
+                    <connections>
+                        <outlet property="mapView" destination="lvd-tf-UbH" id="Xgu-du-5Ln"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="AKG-uj-fX2" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
@@ -251,7 +254,7 @@
         <scene sceneID="jGl-pO-nRO">
             <objects>
                 <navigationController id="0dh-aN-TgO" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" title="Kart" image="map" catalog="system" id="yQL-Ze-VYT"/>
+                    <tabBarItem key="tabBarItem" title="Kart" image="map.fill" catalog="system" id="yQL-Ze-VYT"/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="bwL-U5-2wI">
                         <rect key="frame" x="0.0" y="44" width="414" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -269,7 +272,7 @@
         <image name="cloud.sun.fill" catalog="system" width="128" height="93"/>
         <image name="drop.fill" catalog="system" width="101" height="128"/>
         <image name="house.fill" catalog="system" width="128" height="106"/>
-        <image name="map" catalog="system" width="128" height="110"/>
+        <image name="map.fill" catalog="system" width="128" height="110"/>
         <image name="umbrella.fill" catalog="system" width="124" height="128"/>
         <namedColor name="dayViewColor">
             <color red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>

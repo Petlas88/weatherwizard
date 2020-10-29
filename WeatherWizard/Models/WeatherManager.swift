@@ -4,17 +4,25 @@
 //
 
 import Foundation
+import CoreLocation
+
+protocol WeatherManagerDelegate {
+    func didUpdateWeather(_ weatherManager: WeatherManager, weather: WeatherModel)
+    func didFailWithError(error: Error)
+}
 
 struct WeatherManager {
     let weatherUrl = "https://api.met.no/weatherapi/locationforecast/2.0/compact.json?"
     
-    func fetchWeather(lat: Double, lon: Double)  {
-        
+    var delegate: WeatherManagerDelegate?
+    
+    mutating func fetchWeather(lat: CLLocationDegrees, lon: CLLocationDegrees)  {
         let urlString = "\(weatherUrl)lat=\(lat)&lon=\(lon)"
-        performRequest(urlString: urlString)
+        
+        performRequest(with: urlString)
     }
     
-    func performRequest(urlString:String)  {
+    func performRequest(with urlString:String)  {
         
         if let url = URL(string: urlString) {
             
@@ -22,13 +30,16 @@ struct WeatherManager {
             
             let task = session.dataTask(with: url) { (data, response, error) in
                 if error != nil {
-                    print(error!)
+                    //Needed the self. notation in the past, seems to be working fine without it now (Swift 5, Xcode 12.1)
+                    delegate?.didFailWithError(error: error!)
                     return
                 }
                 
                 if let safeData = data {
                     //Needed the self. notation in the past, seems to be working fine without it now (Swift 5, Xcode 12.1)
-                    parseJSON(weatherData: safeData)
+                    if let weather = parseJSON(safeData) {
+                        delegate?.didUpdateWeather(self, weather: weather)
+                    }
                 }
             }
             
@@ -36,23 +47,35 @@ struct WeatherManager {
         }
     }
     
-    func parseJSON(weatherData: Data) {
+    func parseJSON(_ weatherData: Data) -> WeatherModel? {
         let decoder = JSONDecoder()
         
-        
         do {
-           let decodedData = try decoder.decode(WeatherData.self, from: weatherData)
-            print("Instant")
-            print(decodedData.properties.timeseries[1].data.instant.details.air_temperature)
-            print("******")
-            print("Rain next 6h")
+            let decodedData = try decoder.decode(WeatherData.self, from: weatherData)
             
+            //            Units
+            let millimeterSurfix = decodedData.properties.meta.units.precipitationAmount
+            let celciusSurfix = decodedData.properties.meta.units.airTemperature
+            //            Instant data
+            let temperature = "\(decodedData.properties.timeseries[0].data.instant.details.airTemperature) \(celciusSurfix)"
+            //            One hour data
+            let oneHourCondition = decodedData.properties.timeseries[0].data.next1Hours!.summary.symbolCode
+            let oneHourRain = "\(decodedData.properties.timeseries[0].data.next1Hours!.details.precipitationAmount) \(millimeterSurfix)"
+            //            Six hour data
+            let sixHourCondition = decodedData.properties.timeseries[0].data.next6Hours!.summary.symbolCode
+            let sixHourRain = "\(decodedData.properties.timeseries[0].data.next6Hours!.details.precipitationAmount) \(millimeterSurfix)"
+            //            Twelve hour data
+            let twelveHourCondition = decodedData.properties.timeseries[0].data.next12Hours!.summary.symbolCode
         
+            let weather = WeatherModel(temperature: temperature, oneHourCondition: oneHourCondition, oneHourRain: oneHourRain, sixHourCondition: sixHourCondition, sixHourRain: sixHourRain, twelveHourCondition: twelveHourCondition, millimeterSurfix: millimeterSurfix, celciusSurfix: celciusSurfix)
+         
+            print(weather)
+            return weather
+            
         } catch {
-            print(error)
+            delegate?.didFailWithError(error: error)
+            return nil
         }
         
     }
-    
-    
 }
