@@ -9,6 +9,7 @@ struct K {
     static let appName = "🌤WeatherWizard⚡️"
     static let cellIdentifier = "ReusableCell"
     static let cellNibName = "ForecastCell"
+    static let mapWeatherName = "MapWeather"
     
     
     //    Symbol codes from API

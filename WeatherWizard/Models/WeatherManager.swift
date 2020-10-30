@@ -2,6 +2,9 @@
 //  Weathermanager.swift
 //  WeatherWizard
 //
+// This file was partly created before the exam as a part of a Udemy course I followed to learn swift.
+// However, the contens of this is file is entirely written out by me, but is heavely inspired by the course.
+// Course link: https://www.udemy.com/course/ios-13-app-development-bootcamp/
 
 import Foundation
 import CoreLocation
@@ -16,7 +19,7 @@ struct WeatherManager {
     
     var delegate: WeatherManagerDelegate?
     
-    mutating func fetchWeather(lat: CLLocationDegrees, lon: CLLocationDegrees)  {
+    func fetchWeather(lat: CLLocationDegrees, lon: CLLocationDegrees)  {
         let urlString = "\(weatherUrl)lat=\(lat)&lon=\(lon)"
         
         performRequest(with: urlString)

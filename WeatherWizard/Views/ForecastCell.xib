@@ -23,9 +23,9 @@
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="enz-Do-daS">
                                 <rect key="frame" x="15" y="15" width="41.5" height="81.5"/>
                                 <subviews>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="yxU-P0-8yu">
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="yxU-P0-8yu">
                                         <rect key="frame" x="0.0" y="0.0" width="41.5" height="20.5"/>
-                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                        <fontDescription key="fontDescription" name=".AppleSystemUIFont" family=".AppleSystemUIFont" pointSize="17"/>
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
                                     </label>
@@ -66,10 +66,18 @@
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
+                            <view alpha="0.29999999999999999" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="vdv-wR-03U" userLabel="Divider">
+                                <rect key="frame" x="0.0" y="38.5" width="381" height="2"/>
+                                <color key="backgroundColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="2" id="0S3-mh-OQE"/>
+                                </constraints>
+                            </view>
                         </subviews>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
                             <constraint firstItem="9pH-gG-BYM" firstAttribute="top" secondItem="Tb6-yi-IUs" secondAttribute="bottom" constant="20" id="FVQ-zt-iXW"/>
+                            <constraint firstItem="vdv-wR-03U" firstAttribute="top" secondItem="yxU-P0-8yu" secondAttribute="bottom" constant="3" id="J1f-j2-e3c"/>
                             <constraint firstItem="INs-ZZ-idv" firstAttribute="top" secondItem="SR6-wu-fHN" secondAttribute="top" id="JKZ-ms-R9g"/>
                             <constraint firstAttribute="bottom" secondItem="enz-Do-daS" secondAttribute="bottom" constant="51.5" id="Mbf-PM-xGn"/>
                             <constraint firstAttribute="trailing" secondItem="Tb6-yi-IUs" secondAttribute="trailing" constant="15" id="dxe-yU-A8d"/>
@@ -77,6 +85,8 @@
                             <constraint firstItem="enz-Do-daS" firstAttribute="leading" secondItem="Gnc-sD-d77" secondAttribute="leading" constant="15" id="fkj-Sg-bJr"/>
                             <constraint firstItem="vtF-zq-GN8" firstAttribute="top" secondItem="bvb-Ki-gRb" secondAttribute="top" id="hiV-Tt-cuH"/>
                             <constraint firstAttribute="trailing" secondItem="9pH-gG-BYM" secondAttribute="trailing" constant="15" id="hiu-cj-6PW"/>
+                            <constraint firstItem="vdv-wR-03U" firstAttribute="leading" secondItem="Gnc-sD-d77" secondAttribute="leading" id="iuu-6n-uLE"/>
+                            <constraint firstAttribute="trailing" secondItem="vdv-wR-03U" secondAttribute="trailing" id="zvj-OO-uXZ"/>
                         </constraints>
                     </view>
                 </subviews>
