@@ -69,10 +69,12 @@ struct WeatherManager {
             let sixHourRain = "\(decodedData.properties.timeseries[0].data.next6Hours!.details.precipitationAmount) \(millimeterSurfix)"
             //            Twelve hour data
             let twelveHourCondition = decodedData.properties.timeseries[0].data.next12Hours!.summary.symbolCode
-        
-            let weather = WeatherModel(temperature: temperature, oneHourCondition: oneHourCondition, oneHourRain: oneHourRain, sixHourCondition: sixHourCondition, sixHourRain: sixHourRain, twelveHourCondition: twelveHourCondition, millimeterSurfix: millimeterSurfix, celciusSurfix: celciusSurfix)
-         
-            print(weather)
+            //            Location coordinates (for MapWeather)
+            let latitude = String(decodedData.geometry.coordinates[0])
+            let longitude = String(decodedData.geometry.coordinates[1])
+            
+            let weather = WeatherModel(temperature: temperature, oneHourCondition: oneHourCondition, oneHourRain: oneHourRain, sixHourCondition: sixHourCondition, sixHourRain: sixHourRain, twelveHourCondition: twelveHourCondition, millimeterSurfix: millimeterSurfix, celciusSurfix: celciusSurfix, latitude: latitude, longitude: longitude)
+            
             return weather
             
         } catch {

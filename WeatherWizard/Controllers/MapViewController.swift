@@ -14,26 +14,21 @@ class MapViewController: UIViewController{
     
     @IBOutlet weak var mapView: MKMapView!
     @IBOutlet weak var locationSwitch: UISwitch!
+    @IBOutlet weak var pinModeImage: UIImageView!
+    @IBOutlet weak var userLocationModeImage: UIImageView!
+    @IBOutlet weak var locationSwitchStack: UIStackView!
+    @IBOutlet weak var mapWeather: MapWeather!
     
-    var weatherManager = WeatherManager()
     var forecastViewController = ForecastViewController()
     var locationManager = CLLocationManager()
-    var mapWeather = MapWeather()
-    var mapWeatherView = MapWeather() // Reassign to "let" in didLoad if view is not to be hidden before long tap
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         mapView.delegate = self
-        weatherManager.delegate = self
         locationManager.delegate = self
-        mapWeather.delegate = self
-        
-        mapWeatherView = MapWeather(frame: CGRect(x: 0.0, y: self.view.bounds.height - (self.view.bounds.height * 0.25), width: self.view.bounds.width, height: self.view.bounds.height * 0.25))
-        self.view.addSubview(mapWeatherView)
-        mapWeatherView.isHidden = true
-        
-        
+    
         mapView.showsUserLocation = true
         
         let longTapGesture = UILongPressGestureRecognizer(target: self, action: #selector(didLongPress))
@@ -41,17 +36,16 @@ class MapViewController: UIViewController{
         
         locationManager.desiredAccuracy = kCLLocationAccuracyBest
         locationManager.requestWhenInUseAuthorization()
+        
         locationManager.startUpdatingLocation()
+        
+        locationSwitchStack.layer.cornerRadius = 10
         
         locationSwitch.isOn = false
         
+        
     }
-    
-    //    override func viewDidAppear(_ animated: Bool) {
-    //        //        Want to get position everytime the view appears
-    //
-    //    }
-    
+        
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         
@@ -65,16 +59,15 @@ class MapViewController: UIViewController{
             locationManager.startUpdatingLocation()
             let annotations = mapView.annotations.filter({ !($0 is MKUserLocation) })
             mapView.removeAnnotations(annotations)
+            userLocationModeImage.tintColor = #colorLiteral(red: 0.4666666687, green: 0.8900527835, blue: 0.2666666806, alpha: 1)
+            pinModeImage.tintColor = #colorLiteral(red: 0.9254902005, green: 0.2352941185, blue: 0.1019607857, alpha: 1)
         } else {
             if pinLocation.latitude == 0.0 && pinLocation.longitude == 0.0 {
                 pinLocation = mapView.centerCoordinate
             }
-            
+            pinModeImage.tintColor = #colorLiteral(red: 0.4666666687, green: 0.8900527835, blue: 0.2666666806, alpha: 1)
+            userLocationModeImage.tintColor = #colorLiteral(red: 0.9254902005, green: 0.2352941185, blue: 0.1019607857, alpha: 1)
             addAnnotation(location: CLLocationCoordinate2D(latitude: pinLocation.latitude, longitude: pinLocation.longitude))
-            mapWeatherView.isHidden = false
-            NSLayoutConstraint.activate([
-                mapView.bottomAnchor.constraint(equalTo: mapWeatherView.topAnchor) // Put in didLoad if bottom view is not to be hidden before toggling switch.
-            ])
         }
         
         mapView.showsUserLocation = !locationSwitch.isOn
@@ -92,11 +85,13 @@ extension MapViewController: CLLocationManagerDelegate {
 extension MapViewController: MKMapViewDelegate {
     
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        
         if let location = locations.first {
-            
+
             locationManager.stopUpdatingLocation()
             panToLocation(location)
             userLocation = location
+            mapWeather.locationDidChange(lat: location.coordinate.latitude, lon: location.coordinate.longitude)
         }
     }
     
@@ -134,6 +129,7 @@ extension MapViewController: MKMapViewDelegate {
         
         panToLocation(convertedLocation)
         pinLocation = location
+        mapWeather.locationDidChange(lat: location.latitude, lon: location.longitude)
     }
     
     func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
@@ -142,22 +138,6 @@ extension MapViewController: MKMapViewDelegate {
 }
 
 
-//MARK: - WeatherManagerDelegate
 
-extension MapViewController: WeatherManagerDelegate {
-    func didUpdateWeather(_ weatherManager: WeatherManager, weather: WeatherModel) {
-        didGetData()
-    }
-    
-    func didFailWithError(error: Error) {
-        print(error)
-    }
-}
 
-//MARK: - MapWeatherDelegate
 
-extension MapViewController: MapWeatherDelegate {
-    func didGetData() {
-        
-    }
-}

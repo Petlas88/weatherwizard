@@ -212,30 +212,66 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" mapType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="lvd-tf-UbH">
-                                <rect key="frame" x="0.0" y="88" width="414" height="725"/>
+                                <rect key="frame" x="0.0" y="88" width="414" height="593"/>
                             </mapView>
-                            <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="cEq-XK-aBa">
-                                <rect key="frame" x="335" y="118" width="51" height="31"/>
-                                <connections>
-                                    <action selector="locationSwitchToggled:" destination="PeM-GX-23D" eventType="valueChanged" id="Pqh-iw-4yB"/>
-                                </connections>
-                            </switch>
+                            <stackView opaque="NO" contentMode="scaleToFill" alignment="top" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="Gao-l1-RKn">
+                                <rect key="frame" x="15" y="103" width="129" height="31"/>
+                                <subviews>
+                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="mappin.slash" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="DjM-B2-INW">
+                                        <rect key="frame" x="0.0" y="-0.5" width="30" height="30"/>
+                                        <color key="tintColor" red="0.46666666870000001" green="0.89005278346563699" blue="0.26666668059999998" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="30" id="2A0-lo-erM"/>
+                                            <constraint firstAttribute="height" constant="30" id="OCh-a7-GNx"/>
+                                        </constraints>
+                                    </imageView>
+                                    <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="cEq-XK-aBa">
+                                        <rect key="frame" x="40" y="0.0" width="51" height="31"/>
+                                        <connections>
+                                            <action selector="locationSwitchToggled:" destination="PeM-GX-23D" eventType="valueChanged" id="Pqh-iw-4yB"/>
+                                        </connections>
+                                    </switch>
+                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="mappin.and.ellipse" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="dzb-PO-eC3">
+                                        <rect key="frame" x="99" y="-0.5" width="30" height="30.5"/>
+                                        <color key="tintColor" systemColor="systemRedColor"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="30" id="2Dd-tL-3dq"/>
+                                            <constraint firstAttribute="width" constant="30" id="deg-s6-DkK"/>
+                                        </constraints>
+                                    </imageView>
+                                </subviews>
+                                <color key="backgroundColor" systemColor="secondaryLabelColor"/>
+                            </stackView>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="dBX-pl-cd4" userLabel="CustomView" customClass="MapWeather" customModule="WeatherWizard" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="681" width="414" height="132"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" secondItem="dBX-pl-cd4" secondAttribute="height" multiplier="69:22" id="UQI-H0-mPp"/>
+                                </constraints>
+                            </view>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="Qqp-Ch-Luz"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
-                            <constraint firstItem="Qqp-Ch-Luz" firstAttribute="bottom" secondItem="lvd-tf-UbH" secondAttribute="bottom" id="7gq-5y-AeQ"/>
-                            <constraint firstItem="cEq-XK-aBa" firstAttribute="top" secondItem="Qqp-Ch-Luz" secondAttribute="top" constant="30" id="GT1-5G-rRF"/>
+                            <constraint firstItem="Gao-l1-RKn" firstAttribute="top" secondItem="Qqp-Ch-Luz" secondAttribute="top" constant="15" id="0Gx-T4-u52"/>
+                            <constraint firstItem="dBX-pl-cd4" firstAttribute="leading" secondItem="Qqp-Ch-Luz" secondAttribute="leading" id="JIZ-vS-cNv"/>
                             <constraint firstItem="Qqp-Ch-Luz" firstAttribute="trailing" secondItem="lvd-tf-UbH" secondAttribute="trailing" id="M9X-ed-pEe"/>
+                            <constraint firstItem="Qqp-Ch-Luz" firstAttribute="bottom" secondItem="dBX-pl-cd4" secondAttribute="bottom" id="aer-pv-ZSA"/>
                             <constraint firstItem="lvd-tf-UbH" firstAttribute="leading" secondItem="Qqp-Ch-Luz" secondAttribute="leading" id="aq8-e7-bS1"/>
-                            <constraint firstItem="Qqp-Ch-Luz" firstAttribute="trailing" secondItem="cEq-XK-aBa" secondAttribute="trailing" constant="30" id="c1J-gE-G8P"/>
+                            <constraint firstItem="Gao-l1-RKn" firstAttribute="leading" secondItem="Qqp-Ch-Luz" secondAttribute="leading" constant="15" id="gGJ-uH-0Up"/>
                             <constraint firstItem="lvd-tf-UbH" firstAttribute="top" secondItem="Qqp-Ch-Luz" secondAttribute="top" id="he7-yt-Tes"/>
+                            <constraint firstItem="Qqp-Ch-Luz" firstAttribute="trailing" secondItem="dBX-pl-cd4" secondAttribute="trailing" id="mVV-eF-ZbW"/>
+                            <constraint firstItem="dBX-pl-cd4" firstAttribute="top" secondItem="lvd-tf-UbH" secondAttribute="bottom" id="q66-aa-cwg"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" title="Kart" id="U90-GI-AS4"/>
                     <connections>
                         <outlet property="locationSwitch" destination="cEq-XK-aBa" id="i2X-sq-ZOD"/>
+                        <outlet property="locationSwitchStack" destination="Gao-l1-RKn" id="ozm-tX-5S2"/>
                         <outlet property="mapView" destination="lvd-tf-UbH" id="Xgu-du-5Ln"/>
+                        <outlet property="mapWeather" destination="dBX-pl-cd4" id="lwW-pU-tsS"/>
+                        <outlet property="pinModeImage" destination="dzb-PO-eC3" id="u4l-3t-jl4"/>
+                        <outlet property="userLocationModeImage" destination="DjM-B2-INW" id="rpJ-9e-zgf"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="AKG-uj-fX2" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
@@ -282,12 +318,20 @@
         <image name="drop.fill" catalog="system" width="101" height="128"/>
         <image name="house.fill" catalog="system" width="128" height="106"/>
         <image name="map.fill" catalog="system" width="128" height="110"/>
+        <image name="mappin.and.ellipse" catalog="system" width="118" height="128"/>
+        <image name="mappin.slash" catalog="system" width="102" height="128"/>
         <image name="umbrella.fill" catalog="system" width="124" height="128"/>
         <namedColor name="dayViewColor">
             <color red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </namedColor>
+        <systemColor name="secondaryLabelColor">
+            <color red="0.23529411764705882" green="0.23529411764705882" blue="0.2627450980392157" alpha="0.59999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
+        </systemColor>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+        <systemColor name="systemRedColor">
+            <color red="1" green="0.23137254901960785" blue="0.18823529411764706" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
     </resources>
 </document>
