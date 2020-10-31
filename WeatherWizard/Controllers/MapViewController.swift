@@ -62,14 +62,19 @@ class MapViewController: UIViewController{
     
     @IBAction func locationSwitchToggled(_ sender: UISwitch) {
         if !locationSwitch.isOn {
-            panToLocation(userLocation)
+            locationManager.startUpdatingLocation()
             let annotations = mapView.annotations.filter({ !($0 is MKUserLocation) })
             mapView.removeAnnotations(annotations)
         } else {
-            if pinLocation.latitude == 0.0 && pinLocation.longitude == 0.00 {
+            if pinLocation.latitude == 0.0 && pinLocation.longitude == 0.0 {
                 pinLocation = mapView.centerCoordinate
             }
+            
             addAnnotation(location: CLLocationCoordinate2D(latitude: pinLocation.latitude, longitude: pinLocation.longitude))
+            mapWeatherView.isHidden = false
+            NSLayoutConstraint.activate([
+                mapView.bottomAnchor.constraint(equalTo: mapWeatherView.topAnchor) // Put in didLoad if bottom view is not to be hidden before toggling switch.
+            ])
         }
         
         mapView.showsUserLocation = !locationSwitch.isOn
@@ -92,9 +97,6 @@ extension MapViewController: MKMapViewDelegate {
             locationManager.stopUpdatingLocation()
             panToLocation(location)
             userLocation = location
-           
-            
-            
         }
     }
     
@@ -112,10 +114,6 @@ extension MapViewController: MKMapViewDelegate {
                 let locationInView = sender.location(in: mapView)
                 let locationOnMap = mapView.convert(locationInView, toCoordinateFrom: mapView)
                 addAnnotation(location: locationOnMap)
-                mapWeatherView.isHidden = false
-                NSLayoutConstraint.activate([
-                    mapView.bottomAnchor.constraint(equalTo: mapWeatherView.topAnchor) // Put in didLoad if bottom view is not to be hidden before long press.
-                ])
             }
         } else {
             return
