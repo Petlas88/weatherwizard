@@ -47,13 +47,13 @@
                         <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="18" translatesAutoresizingMaskIntoConstraints="NO" id="OeI-ZA-Goj">
                             <rect key="frame" x="121.5" y="21.5" width="102" height="59"/>
                             <subviews>
-                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="​59.911166" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="fYB-3q-QJR">
+                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="LatDeg" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="fYB-3q-QJR">
                                     <rect key="frame" x="0.0" y="0.0" width="102" height="20.5"/>
                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                     <nil key="textColor"/>
                                     <nil key="highlightedColor"/>
                                 </label>
-                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="10.744810" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="dR6-lS-EON">
+                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="LonDeg" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="dR6-lS-EON">
                                     <rect key="frame" x="0.0" y="38.5" width="102" height="20.5"/>
                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                     <nil key="textColor"/>
@@ -61,8 +61,8 @@
                                 </label>
                             </subviews>
                         </stackView>
-                        <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="userLocation" translatesAutoresizingMaskIntoConstraints="NO" id="1SW-YW-nPc">
-                            <rect key="frame" x="243.5" y="0.0" width="101.5" height="102"/>
+                        <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="exclamationmark.icloud.fill" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="1SW-YW-nPc">
+                            <rect key="frame" x="243.5" y="1" width="101.5" height="98.5"/>
                             <color key="tintColor" name="dayViewColor"/>
                             <constraints>
                                 <constraint firstAttribute="width" secondItem="1SW-YW-nPc" secondAttribute="height" multiplier="1:1" id="LIX-ai-XEK"/>
@@ -83,7 +83,7 @@
         </view>
     </objects>
     <resources>
-        <image name="userLocation" width="100" height="100"/>
+        <image name="exclamationmark.icloud.fill" catalog="system" width="128" height="88"/>
         <namedColor name="dayViewColor">
             <color red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </namedColor>

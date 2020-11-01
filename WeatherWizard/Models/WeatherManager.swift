@@ -2,8 +2,8 @@
 //  Weathermanager.swift
 //  WeatherWizard
 //
-// This file was partly created before the exam as a part of a Udemy course I followed to learn swift.
-// However, the contens of this is file is entirely written out by me, but is heavely inspired by the course.
+// The contents of this file is reused from a course I followed on Udemy to learn Swift.
+// However, the contens of this is file is entirely written out by me again during this exam, but is heavely inspired by the course. All logic related to this specific app is also done by me.
 // Course link: https://www.udemy.com/course/ios-13-app-development-bootcamp/
 
 import Foundation
@@ -55,25 +55,27 @@ struct WeatherManager {
         
         do {
             let decodedData = try decoder.decode(WeatherData.self, from: weatherData)
-            
-            //            Units
+            //  Fetching data from timeseries index 1 as index 0 seems to be one hour in the past. Index 1 seems to be more accurate to actual time.
+            //  Units
             let millimeterSurfix = decodedData.properties.meta.units.precipitationAmount
             let celciusSurfix = decodedData.properties.meta.units.airTemperature
-            //            Instant data
-            let temperature = "\(decodedData.properties.timeseries[0].data.instant.details.airTemperature) \(celciusSurfix)"
-            //            One hour data
-            let oneHourCondition = decodedData.properties.timeseries[0].data.next1Hours!.summary.symbolCode
-            let oneHourRain = "\(decodedData.properties.timeseries[0].data.next1Hours!.details.precipitationAmount) \(millimeterSurfix)"
-            //            Six hour data
-            let sixHourCondition = decodedData.properties.timeseries[0].data.next6Hours!.summary.symbolCode
-            let sixHourRain = "\(decodedData.properties.timeseries[0].data.next6Hours!.details.precipitationAmount) \(millimeterSurfix)"
-            //            Twelve hour data
-            let twelveHourCondition = decodedData.properties.timeseries[0].data.next12Hours!.summary.symbolCode
-            //            Location coordinates (for MapWeather)
-            let latitude = String(decodedData.geometry.coordinates[0])
-            let longitude = String(decodedData.geometry.coordinates[1])
+            //  Instant data
+            let temperature = "\(decodedData.properties.timeseries[1].data.instant.details.airTemperature) \(celciusSurfix)"
+            //  One hour data
+            let oneHourCondition = decodedData.properties.timeseries[1].data.next1Hours!.summary.symbolCode
+            let oneHourRain = "\(decodedData.properties.timeseries[1].data.next1Hours!.details.precipitationAmount) \(millimeterSurfix)"
+            //  Six hour data
+            let sixHourCondition = decodedData.properties.timeseries[1].data.next6Hours!.summary.symbolCode
+            let sixHourRain = "\(decodedData.properties.timeseries[1].data.next6Hours!.details.precipitationAmount) \(millimeterSurfix)"
+            //  Twelve hour data
+            let twelveHourCondition = decodedData.properties.timeseries[1].data.next12Hours!.summary.symbolCode
+            //  Location coordinates (for MapWeather)
+            let latitude = String(decodedData.geometry.coordinates[1])
+            let longitude = String(decodedData.geometry.coordinates[0])
+            //  Time (for Home screen)
+            let time = decodedData.properties.timeseries[1].time
             
-            let weather = WeatherModel(temperature: temperature, oneHourCondition: oneHourCondition, oneHourRain: oneHourRain, sixHourCondition: sixHourCondition, sixHourRain: sixHourRain, twelveHourCondition: twelveHourCondition, millimeterSurfix: millimeterSurfix, celciusSurfix: celciusSurfix, latitude: latitude, longitude: longitude)
+            let weather = WeatherModel(temperature: temperature, oneHourCondition: oneHourCondition, oneHourRain: oneHourRain, sixHourCondition: sixHourCondition, sixHourRain: sixHourRain, twelveHourCondition: twelveHourCondition, millimeterSurfix: millimeterSurfix, celciusSurfix: celciusSurfix, latitude: latitude, longitude: longitude, time: time)
             
             return weather
             

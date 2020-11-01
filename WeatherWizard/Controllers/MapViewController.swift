@@ -35,7 +35,6 @@ class MapViewController: UIViewController{
         mapView.addGestureRecognizer(longTapGesture)
         
         locationManager.desiredAccuracy = kCLLocationAccuracyBest
-        locationManager.requestWhenInUseAuthorization()
         
         locationManager.startUpdatingLocation()
         
@@ -78,16 +77,9 @@ class MapViewController: UIViewController{
 
 extension MapViewController: CLLocationManagerDelegate {
     
-}
-
-//MARK: - MKMapViewDelegate
-
-extension MapViewController: MKMapViewDelegate {
-    
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         
         if let location = locations.first {
-
             locationManager.stopUpdatingLocation()
             panToLocation(location)
             userLocation = location
@@ -95,8 +87,16 @@ extension MapViewController: MKMapViewDelegate {
         }
     }
     
+    func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
+        print("Authorization changed")
+    }
+}
+
+//MARK: - MKMapViewDelegate
+
+extension MapViewController: MKMapViewDelegate {
+    
     func panToLocation(_ location: CLLocation) {
-        
         let center = CLLocationCoordinate2D(latitude: location.coordinate.latitude, longitude: location.coordinate.longitude)
         let region = MKCoordinateRegion(center: center, span: MKCoordinateSpan(latitudeDelta: 0.09, longitudeDelta: 0.09))
         
@@ -132,9 +132,7 @@ extension MapViewController: MKMapViewDelegate {
         mapWeather.locationDidChange(lat: location.latitude, lon: location.longitude)
     }
     
-    func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
-        print("changed")
-    }
+   
 }
 
 

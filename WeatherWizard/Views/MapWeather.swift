@@ -37,7 +37,6 @@ class MapWeather: UIView {
     
     func locationDidChange(lat: CLLocationDegrees, lon: CLLocationDegrees) {
         weatherManager.fetchWeather(lat: lat, lon: lon)
-        print("Location change")
     }
 }
 
@@ -48,7 +47,11 @@ extension MapWeather: WeatherManagerDelegate {
         DispatchQueue.main.async {
             self.latDegreesLabel.text = weather.latitude
             self.lonDegreesLabel.text = weather.longitude
-            self.weatherIcon.image = UIImage(systemName: weather.weatherIcon)
+            self.weatherIcon.image =  UIImage(named: weather.oneHourCondition)
+            // oneHourCondition corresponds to icon names found in assets.
+            // The icons are downloaded from the following link: https://api.met.no/weatherapi/weathericon/2.0/documentation under Usage.
+            // The weather icons are copyright (c) 2015-2017 Yr and licensed under the MIT License.
+            // See https://github.com/YR/weather-symbols/blob/master/LICENSE for more information.
         }
     }
     
@@ -56,9 +59,9 @@ extension MapWeather: WeatherManagerDelegate {
         DispatchQueue.main.async {
             let parentView: UIViewController = UIApplication.shared.windows[0].rootViewController!
             let alert = UIAlertController(title: "🥶", message: "Vi kunne desverre ikke finne været akkurat nå. Venligst prøv igjen senere. ☀️", preferredStyle: .alert)
-
+            
             alert.addAction(UIAlertAction(title: "Ok", style: .cancel, handler: nil))
-
+            
             parentView.present(alert, animated: true, completion: nil)
         }
     }

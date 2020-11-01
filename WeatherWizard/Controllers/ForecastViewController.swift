@@ -76,12 +76,11 @@ extension ForecastViewController: WeatherManagerDelegate {
     
     func didFailWithError(error: Error) {
         DispatchQueue.main.async {
-            let parentView: UIViewController = UIApplication.shared.windows[0].rootViewController!
             let alert = UIAlertController(title: "🥶", message: "Vi kunne desverre ikke finne været akkurat nå. Venligst prøv igjen senere. ☀️", preferredStyle: .alert)
-
+            
             alert.addAction(UIAlertAction(title: "Ok", style: .cancel, handler: nil))
 
-            parentView.present(alert, animated: true, completion: nil)
+            self.present(alert, animated: true, completion: nil)
         }
     }
 }

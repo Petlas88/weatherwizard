@@ -42,6 +42,7 @@ struct Units: Codable {
 
 // MARK: - Timesery
 struct Timesery: Codable {
+    let time: String
     let data: DataClass
 }
 
