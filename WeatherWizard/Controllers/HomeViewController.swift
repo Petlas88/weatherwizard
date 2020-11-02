@@ -70,19 +70,20 @@ extension HomeViewController: WeatherManagerDelegate {
         
         let timeRemovedT = weather.time.replacingOccurrences(of: "T", with: " ")
         let formattedTime = timeRemovedT.replacingOccurrences(of: "Z", with: ".0")
-
+        
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss.A"
         let date = dateFormatter.date(from: formattedTime)!
         dateFormatter.dateFormat = "cccc"
         dateFormatter.locale = Locale(identifier: "no_NO")
         let weekday = dateFormatter.string(from: date)
-
+        
         
         DispatchQueue.main.async {
             self.dayLabel.text = weekday.capitalized
             for hour in self.dailyHours {
-                if hour.contains("rain") {
+                // Added sleet to show rain. Because water from the skies == rain
+                if hour.contains("rain") || hour.contains("sleet") {
                     self.weatherIcon.image = UIImage(systemName: "umbrella.fill")
                     self.adviceLabel.text = "Det blir regn i dag, ta med paraply! ☔️"
                 } else {
@@ -95,10 +96,10 @@ extension HomeViewController: WeatherManagerDelegate {
     
     func didFailWithError(error: Error) {
         DispatchQueue.main.async {
-            let alert = UIAlertController(title: "Nettverksfeil", message: "Vi kunne ikke finne oppdatert værinformasjon. Været som vises er lagret tidligere.", preferredStyle: .alert)
+            let alert = UIAlertController(title: "Nettverksfeil", message: "Vi kunne ikke finne oppdatert værinformasjon. Været som vises er lagret tidligere og kan være utdatert.", preferredStyle: .alert)
             
             alert.addAction(UIAlertAction(title: "Ok", style: .cancel, handler: nil))
-
+            
             self.present(alert, animated: true, completion: nil)
         }
     }

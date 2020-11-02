@@ -34,7 +34,7 @@ class ForecastViewController: UIViewController {
         let tabbar = tabBarController as! MainTabBarController
         //        Calling fetchWeather here to not update everytime view appears.
         //        Also checking that user has not fetched current location (lat/lon from tab bar == nil) to not overwrite
-        if tabbar.tabBarLat == nil, tabbar.tabBarLon == nil {
+        if tabbar.tabBarLat == nil || tabbar.tabBarLon == nil {
             weatherManager.fetchWeather(lat: 59.911166, lon: 10.744810)
             locationLabel.text = "Høyskolen Kristiania"
         }

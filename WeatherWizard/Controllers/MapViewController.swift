@@ -78,7 +78,6 @@ class MapViewController: UIViewController{
 extension MapViewController: CLLocationManagerDelegate {
     
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        
         if let location = locations.first {
             locationManager.stopUpdatingLocation()
             panToLocation(location)
@@ -86,7 +85,6 @@ extension MapViewController: CLLocationManagerDelegate {
             mapWeather.locationDidChange(lat: location.coordinate.latitude, lon: location.coordinate.longitude)
         }
     }
-    
     func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
         print("Authorization changed")
     }
@@ -95,7 +93,6 @@ extension MapViewController: CLLocationManagerDelegate {
 //MARK: - MKMapViewDelegate
 
 extension MapViewController: MKMapViewDelegate {
-    
     func panToLocation(_ location: CLLocation) {
         let center = CLLocationCoordinate2D(latitude: location.coordinate.latitude, longitude: location.coordinate.longitude)
         let region = MKCoordinateRegion(center: center, span: MKCoordinateSpan(latitudeDelta: 0.09, longitudeDelta: 0.09))
