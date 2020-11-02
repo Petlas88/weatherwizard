@@ -45,7 +45,6 @@ struct WeatherManager {
                     }
                 }
             }
-            
             task.resume()
         }
     }
@@ -74,6 +73,13 @@ struct WeatherManager {
             let longitude = String(decodedData.geometry.coordinates[0])
             //  Time (for Home screen)
             let time = decodedData.properties.timeseries[1].time
+//            Timeseries (for Home screen)
+//            var timeseries: [Timeseries] = []
+//            for timesery in decodedData.properties.timeseries {
+//                if timesery.time.contains("08:00") && timeseries.count < 7 {
+//                    timeseries.append(Timeseries(tim))
+//                }
+//            }
             
             let weather = WeatherModel(temperature: temperature, oneHourCondition: oneHourCondition, oneHourRain: oneHourRain, sixHourCondition: sixHourCondition, sixHourRain: sixHourRain, twelveHourCondition: twelveHourCondition, millimeterSurfix: millimeterSurfix, celciusSurfix: celciusSurfix, latitude: latitude, longitude: longitude, time: time)
             

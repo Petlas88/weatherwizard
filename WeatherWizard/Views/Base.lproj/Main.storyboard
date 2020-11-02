@@ -98,26 +98,28 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="exclamationmark.icloud.fill" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="rTK-XL-TUP">
-                                <rect key="frame" x="60" y="89" width="294" height="721.5"/>
+                                <rect key="frame" x="60" y="302" width="294" height="290.5"/>
                                 <color key="tintColor" name="dayViewColor"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" secondItem="rTK-XL-TUP" secondAttribute="height" multiplier="15:15" id="CVQ-GT-8S3"/>
+                                </constraints>
                             </imageView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="O8K-JF-gEy"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
                             <constraint firstItem="4pn-vd-8ig" firstAttribute="centerY" secondItem="Q3Y-GY-qHB" secondAttribute="centerY" constant="-70" id="9Yv-1e-hVX"/>
-                            <constraint firstItem="rTK-XL-TUP" firstAttribute="top" secondItem="O8K-JF-gEy" secondAttribute="top" id="9g6-AH-74J"/>
                             <constraint firstItem="7Pw-cL-Ko5" firstAttribute="leading" secondItem="O8K-JF-gEy" secondAttribute="leading" id="IGO-sv-SEn"/>
                             <constraint firstItem="4pn-vd-8ig" firstAttribute="centerX" secondItem="Q3Y-GY-qHB" secondAttribute="centerX" constant="-50" id="Kmh-eG-MXX"/>
                             <constraint firstItem="29c-SX-DSp" firstAttribute="centerX" secondItem="Q3Y-GY-qHB" secondAttribute="centerX" constant="100" id="L4A-vO-bI5"/>
                             <constraint firstItem="0fB-Hk-Rh0" firstAttribute="centerY" secondItem="Q3Y-GY-qHB" secondAttribute="centerY" constant="50" id="QNo-1S-LnM"/>
                             <constraint firstItem="7Pw-cL-Ko5" firstAttribute="top" secondItem="O8K-JF-gEy" secondAttribute="top" constant="30" id="RUV-H7-T8a"/>
                             <constraint firstItem="7VZ-rX-kiP" firstAttribute="centerX" secondItem="Q3Y-GY-qHB" secondAttribute="centerX" constant="-100" id="Trn-dj-LJC"/>
+                            <constraint firstItem="rTK-XL-TUP" firstAttribute="centerY" secondItem="Q3Y-GY-qHB" secondAttribute="centerY" id="UFe-MO-Wyd"/>
                             <constraint firstItem="O8K-JF-gEy" firstAttribute="bottom" secondItem="uGE-WL-wm0" secondAttribute="bottom" constant="50" id="Uit-Zn-RJe"/>
                             <constraint firstItem="O8K-JF-gEy" firstAttribute="trailing" secondItem="rTK-XL-TUP" secondAttribute="trailing" constant="60" id="W7G-pQ-Wy6"/>
                             <constraint firstItem="uGE-WL-wm0" firstAttribute="leading" secondItem="O8K-JF-gEy" secondAttribute="leading" constant="30" id="kRW-mk-MzG"/>
                             <constraint firstItem="rTK-XL-TUP" firstAttribute="leading" secondItem="O8K-JF-gEy" secondAttribute="leading" constant="60" id="pvx-3x-ImH"/>
-                            <constraint firstItem="O8K-JF-gEy" firstAttribute="bottom" secondItem="rTK-XL-TUP" secondAttribute="bottom" id="qGI-45-TJy"/>
                             <constraint firstItem="7VZ-rX-kiP" firstAttribute="centerY" secondItem="Q3Y-GY-qHB" secondAttribute="centerY" constant="-150" id="rkU-tm-bZq"/>
                             <constraint firstItem="0fB-Hk-Rh0" firstAttribute="centerX" secondItem="Q3Y-GY-qHB" secondAttribute="centerX" constant="50" id="t1Y-M1-FrA"/>
                             <constraint firstItem="29c-SX-DSp" firstAttribute="centerY" secondItem="Q3Y-GY-qHB" secondAttribute="centerY" constant="-150" id="vPp-DR-ppP"/>

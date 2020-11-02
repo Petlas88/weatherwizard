@@ -35,11 +35,9 @@ class MapViewController: UIViewController{
         mapView.addGestureRecognizer(longTapGesture)
         
         locationManager.desiredAccuracy = kCLLocationAccuracyBest
-        
         locationManager.startUpdatingLocation()
         
         locationSwitchStack.layer.cornerRadius = 10
-        
         locationSwitch.isOn = false
         
         

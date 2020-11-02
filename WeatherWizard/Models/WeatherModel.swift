@@ -21,6 +21,7 @@ struct WeatherModel {
     let time: String
     
     
+    
     //    Converting symbol codes to conditions based on input
     func getWeatherCondition(timeSpan: String) -> String {
         switch timeSpan {

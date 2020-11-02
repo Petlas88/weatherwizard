@@ -6,6 +6,7 @@
 
 import UIKit
 import CoreLocation
+import CoreData
 
 
 class HomeViewController: UIViewController {
@@ -20,7 +21,12 @@ class HomeViewController: UIViewController {
     
     let locationManager = CLLocationManager()
     var weatherManager = WeatherManager()
+    var helpers = Helpers()
     var dailyHours: [String] = []
+    var dailyWeather: [DailyWeather]?
+    
+    
+    let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     
     var iconHasSpun = false
     
@@ -36,6 +42,9 @@ class HomeViewController: UIViewController {
         let tapRecognizer = UITapGestureRecognizer(target: self, action: #selector(iconTapped))
         weatherIcon.addGestureRecognizer(tapRecognizer)
         weatherIcon.isUserInteractionEnabled = true
+        
+        
+        
     }
     
     @objc func iconTapped() {
@@ -58,40 +67,63 @@ class HomeViewController: UIViewController {
             })
         }
     }
+    
+    func fetchDailyWeather() {
+        do{
+            self.dailyWeather =  try self.context.fetch(DailyWeather.fetchRequest())
+            print(dailyWeather!.count)
+            let day = dailyWeather![0]
+            
+            DispatchQueue.main.async {
+                self.adviceLabel.text = day.advice
+                self.dayLabel.text = day.day
+                self.weatherIcon.image = UIImage(systemName: day.iconName!)
+            }
+        } catch {
+            print("Could not retrieve stored data")
+        }
+    }
 }
 
 //MARK: - WeatherManagerDelegate
 
 extension HomeViewController: WeatherManagerDelegate {
+    
     func didUpdateWeather(_ weatherManager: WeatherManager, weather: WeatherModel) {
-        dailyHours.append(weather.oneHourCondition)
-        dailyHours.append(weather.sixHourCondition)
+        
         dailyHours.append(weather.twelveHourCondition)
+        dailyHours.append(weather.sixHourCondition)
+        dailyHours.append(weather.oneHourCondition)
         
-        let timeRemovedT = weather.time.replacingOccurrences(of: "T", with: " ")
-        let formattedTime = timeRemovedT.replacingOccurrences(of: "Z", with: ".0")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "DailyWeather")
+        let batchDeleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
+        do {
+            try context.execute(batchDeleteRequest)
+        } catch {
+            print(error)
+        }
+
+        let weekday = helpers.dateStringToDay(dateString: weather.time)
+        let newDay = DailyWeather(context: self.context)
         
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss.A"
-        let date = dateFormatter.date(from: formattedTime)!
-        dateFormatter.dateFormat = "cccc"
-        dateFormatter.locale = Locale(identifier: "no_NO")
-        let weekday = dateFormatter.string(from: date)
-        
-        
-        DispatchQueue.main.async {
-            self.dayLabel.text = weekday.capitalized
-            for hour in self.dailyHours {
-                // Added sleet to show rain. Because water from the skies == rain
-                if hour.contains("rain") || hour.contains("sleet") {
-                    self.weatherIcon.image = UIImage(systemName: "umbrella.fill")
-                    self.adviceLabel.text = "Det blir regn i dag, ta med paraply! ☔️"
-                } else {
-                    self.weatherIcon.image = UIImage(systemName: "sun.max.fill")
-                    self.adviceLabel.text = "Ingen regn i dag, la paraplyen bli hjemme! ☀️"
-                }
+        newDay.day = weekday
+        for hour in self.dailyHours {
+            // Added sleet to show rain. Because water from the skies == rain
+            if hour.contains("rain") || hour.contains("sleet") {
+                newDay.iconName = "umbrella.fill"
+                newDay.advice = "Det blir regn i dag, ta med paraply! ☔️"
+            } else {
+                newDay.iconName = "sun.max.fill"
+                newDay.advice = "Ikke noe regn i dag, la paraplyen bli hjemme! ☀️"
             }
         }
+        do {
+            try self.context.save()
+        } catch {
+            print("Error")
+        }
+        
+        self.fetchDailyWeather()
     }
     
     func didFailWithError(error: Error) {
@@ -101,6 +133,8 @@ extension HomeViewController: WeatherManagerDelegate {
             alert.addAction(UIAlertAction(title: "Ok", style: .cancel, handler: nil))
             
             self.present(alert, animated: true, completion: nil)
+            
+            self.fetchDailyWeather()
         }
     }
 }
@@ -121,8 +155,5 @@ extension HomeViewController: CLLocationManagerDelegate {
     }
 }
 
-//MARK: - StringProtocol extension
-extension StringProtocol {
-    var firstCapitalized: String { prefix(1).capitalized + dropFirst() }
-}
+
 

@@ -9,7 +9,7 @@
 import Foundation
 import CoreData
 
-@objc(DailyWeather)
+
 public class DailyWeather: NSManagedObject {
 
 }
