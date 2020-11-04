@@ -18,6 +18,7 @@ class HomeViewController: UIViewController {
     @IBOutlet weak var drop2: UIImageView!
     @IBOutlet weak var drop3: UIImageView!
     @IBOutlet weak var drop4: UIImageView!
+    @IBOutlet weak var updatedLabel: UILabel!
     
     let locationManager = CLLocationManager()
     var weatherManager = WeatherManager()
@@ -87,12 +88,19 @@ class HomeViewController: UIViewController {
             let sort = NSSortDescriptor(key: "sortId", ascending: true)
             request.sortDescriptors = [sort]
             self.dailyWeather =  try self.context.fetch(request)
-          
-            DispatchQueue.main.async {
-                self.adviceLabel.text = self.dailyWeather[0].advice
-                self.dayLabel.text = self.dailyWeather[0].day
-                self.weatherIcon.image = UIImage(systemName: self.dailyWeather[0].iconName!)
+            
+            if dailyWeather != [] {
+                DispatchQueue.main.async {
+                    self.adviceLabel.text = self.dailyWeather[0].advice
+                    self.dayLabel.text = self.dailyWeather[0].day
+                    self.weatherIcon.image = UIImage(systemName: self.dailyWeather[0].iconName!)
+                }
+            } else {
+                self.adviceLabel.text = "Ingen data"
+                self.dayLabel.text = "Ingen data"
+                self.weatherIcon.image = UIImage(systemName: "exclamationmark.icloud.fill")
             }
+          
         } catch {
             print("Could not retrieve stored data")
         }
