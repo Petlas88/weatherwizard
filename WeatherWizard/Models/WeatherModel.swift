@@ -18,7 +18,7 @@ struct WeatherModel {
     let celciusSurfix: String
     let latitude: String
     let longitude: String
-    let time: String
+    let weekdays: [Weekday]
     
     
     

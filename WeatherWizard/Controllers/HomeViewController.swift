@@ -22,8 +22,8 @@ class HomeViewController: UIViewController {
     let locationManager = CLLocationManager()
     var weatherManager = WeatherManager()
     var helpers = Helpers()
-    var dailyHours: [String] = []
-    var dailyWeather: [DailyWeather]?
+    var dailyWeather: [DailyWeather] = []
+    var swipeCount = 0
     
     
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
@@ -39,45 +39,59 @@ class HomeViewController: UIViewController {
         locationManager.requestWhenInUseAuthorization()
         locationManager.startUpdatingLocation()
         
+        let swipeRight = UISwipeGestureRecognizer(target: self, action: #selector(self.didSwipe(sender: )))
+        swipeRight.direction = UISwipeGestureRecognizer.Direction.right
+        
+        let swipeLeft = UISwipeGestureRecognizer(target: self, action: #selector(self.didSwipe(sender: )))
+        swipeLeft.direction = UISwipeGestureRecognizer.Direction.left
+        
+        view.addGestureRecognizer(swipeRight)
+        view.addGestureRecognizer(swipeLeft)
+        
         let tapRecognizer = UITapGestureRecognizer(target: self, action: #selector(iconTapped))
         weatherIcon.addGestureRecognizer(tapRecognizer)
         weatherIcon.isUserInteractionEnabled = true
         
+    }
+    
+    @objc func didSwipe(sender: UISwipeGestureRecognizer) {
         
-        
+        if sender.state == .ended {
+            switch sender.direction {
+            case .right:
+                slideRight()
+                swipeCount > 0 ? swipeCount -= 1 : nil
+                
+            default:
+                slideLeft()
+                swipeCount < dailyWeather.count - 1 ? swipeCount += 1 : nil
+                
+            }
+        }
+        dayLabel.text = dailyWeather[swipeCount].day
+        adviceLabel.text = dailyWeather[swipeCount].advice
+        weatherIcon.image = UIImage(systemName: dailyWeather[swipeCount].iconName!)
     }
     
     @objc func iconTapped() {
         if !iconHasSpun {
-            UIView.animate(withDuration: 3, delay: 0 , options: UIView.AnimationOptions.autoreverse, animations: { () -> Void in
-                self.weatherIcon.transform = CGAffineTransform(rotationAngle: CGFloat.pi)
-                self.weatherIcon.transform = CGAffineTransform(rotationAngle: CGFloat.pi * 2.0)
-            }, completion: {_ in 
-                self.iconHasSpun = true
-            })
+            rotateIcon()
         } else {
-            UIView.animate(withDuration: 2, animations: {() -> Void in
-                self.weatherIcon.transform = CGAffineTransform(scaleX: 3, y: 3)
-            })
-            UIView.animate(withDuration: 2, delay: 2, options: UIView.AnimationOptions.curveEaseIn, animations: { () -> Void in
-                self.weatherIcon.transform = CGAffineTransform(scaleX: 1, y: 1)
-                
-            }, completion: {_ in
-                self.iconHasSpun = false
-            })
+            scaleIcon()
         }
     }
     
     func fetchDailyWeather() {
         do{
-            self.dailyWeather =  try self.context.fetch(DailyWeather.fetchRequest())
-            print(dailyWeather!.count)
-            let day = dailyWeather![0]
-            
+            let request = DailyWeather.fetchRequest() as NSFetchRequest<DailyWeather>
+            let sort = NSSortDescriptor(key: "sortId", ascending: true)
+            request.sortDescriptors = [sort]
+            self.dailyWeather =  try self.context.fetch(request)
+          
             DispatchQueue.main.async {
-                self.adviceLabel.text = day.advice
-                self.dayLabel.text = day.day
-                self.weatherIcon.image = UIImage(systemName: day.iconName!)
+                self.adviceLabel.text = self.dailyWeather[0].advice
+                self.dayLabel.text = self.dailyWeather[0].day
+                self.weatherIcon.image = UIImage(systemName: self.dailyWeather[0].iconName!)
             }
         } catch {
             print("Could not retrieve stored data")
@@ -91,36 +105,35 @@ extension HomeViewController: WeatherManagerDelegate {
     
     func didUpdateWeather(_ weatherManager: WeatherManager, weather: WeatherModel) {
         
-        dailyHours.append(weather.twelveHourCondition)
-        dailyHours.append(weather.sixHourCondition)
-        dailyHours.append(weather.oneHourCondition)
-        
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "DailyWeather")
         let batchDeleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
         do {
             try context.execute(batchDeleteRequest)
         } catch {
-            print(error)
+            print("There was an error deleting data")
         }
-
-        let weekday = helpers.dateStringToDay(dateString: weather.time)
-        let newDay = DailyWeather(context: self.context)
-        
-        newDay.day = weekday
-        for hour in self.dailyHours {
+        var counter: Int64 = 0
+        for weekday in weather.weekdays {
+            let newDay = DailyWeather(context: self.context)
+            
+            newDay.sortId = counter
+            newDay.day = helpers.dateStringToDay(dateString: weekday.day)
+            
             // Added sleet to show rain. Because water from the skies == rain
-            if hour.contains("rain") || hour.contains("sleet") {
+            if weekday.condition.contains("rain") || weekday.condition.contains("sleet") {
                 newDay.iconName = "umbrella.fill"
                 newDay.advice = "Det blir regn i dag, ta med paraply! ☔️"
             } else {
                 newDay.iconName = "sun.max.fill"
                 newDay.advice = "Ikke noe regn i dag, la paraplyen bli hjemme! ☀️"
             }
+            counter += 1
         }
+        
         do {
             try self.context.save()
         } catch {
-            print("Error")
+            print("There was an error saving data")
         }
         
         self.fetchDailyWeather()
@@ -153,6 +166,83 @@ extension HomeViewController: CLLocationManagerDelegate {
     func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
         print("Authorization changed")
     }
+}
+
+//MARK: - Animations
+extension HomeViewController {
+    func slideRight() {
+        if swipeCount > 0 {
+            UIView.animate(withDuration: 0.2, delay: 0, animations: { () -> Void in
+                self.view.transform = CGAffineTransform(translationX: self.view.bounds.width, y: 200)
+                self.view.alpha = 0
+            }, completion: {_ in
+                UIView.animate(withDuration: 0.1, delay: 0, animations: {() -> Void in
+                    self.view.transform = CGAffineTransform(translationX: -self.view.bounds.width, y: 200)
+                }, completion: {_ in
+                    UIView.animate(withDuration: 0.2, animations: {() -> Void in
+                        self.view.transform = CGAffineTransform(translationX: self.view.bounds.width - self.view.bounds.width, y: 0)
+                        self.view.alpha = 1
+                    })
+                })
+            })
+        } else {
+            UIView.animate(withDuration: 0.2, delay: 0, options: [UIView.AnimationOptions.curveEaseInOut], animations: { () -> Void in
+                self.view.transform = CGAffineTransform(translationX: 50, y: 0)
+            } )
+            UIView.animate(withDuration: 0.2, delay: 0.2, options: [UIView.AnimationOptions.curveEaseInOut], animations: { () -> Void in
+                self.view.transform = CGAffineTransform(translationX: 0, y: 0)
+            } )
+            
+        }
+    }
+    
+    func slideLeft()  {
+        if swipeCount != dailyWeather.count - 1{
+            UIView.animate(withDuration: 0.2, delay: 0, animations: { () -> Void in
+                self.view.transform = CGAffineTransform(translationX: -self.view.bounds.width, y: 200)
+                self.view.alpha = 0
+            }, completion: {_ in
+                UIView.animate(withDuration: 0, delay: 0, animations: {() -> Void in
+                    self.view.transform = CGAffineTransform(translationX: +self.view.bounds.width, y: 200)
+                }, completion: {_ in
+                    UIView.animate(withDuration: 0.2, animations: {() -> Void in
+                        self.view.transform = CGAffineTransform(translationX: self.view.bounds.width - self.view.bounds.width, y: 0)
+                        self.view.alpha = 1
+                    })
+                })
+            })
+        } else {
+            UIView.animate(withDuration: 0.2, delay: 0, options: [UIView.AnimationOptions.curveEaseInOut], animations: { () -> Void in
+                self.view.transform = CGAffineTransform(translationX: -50, y: 0)
+            } )
+            UIView.animate(withDuration: 0.2, delay: 0.2, options: [UIView.AnimationOptions.curveEaseInOut], animations: { () -> Void in
+                self.view.transform = CGAffineTransform(translationX: 0, y: 0)
+            } )
+            
+        }
+    }
+    
+    func rotateIcon() {
+        UIView.animate(withDuration: 3, delay: 0 , options: UIView.AnimationOptions.autoreverse, animations: { () -> Void in
+            self.weatherIcon.transform = CGAffineTransform(rotationAngle: CGFloat.pi)
+            self.weatherIcon.transform = CGAffineTransform(rotationAngle: CGFloat.pi * 2.0)
+        }, completion: {_ in
+            self.iconHasSpun = true
+        })
+    }
+    
+    func scaleIcon() {
+        UIView.animate(withDuration: 2, animations: {() -> Void in
+            self.weatherIcon.transform = CGAffineTransform(scaleX: 3, y: 3)
+        })
+        UIView.animate(withDuration: 2, delay: 2, options: UIView.AnimationOptions.curveEaseIn, animations: { () -> Void in
+            self.weatherIcon.transform = CGAffineTransform(scaleX: 1, y: 1)
+            
+        }, completion: {_ in
+            self.iconHasSpun = false
+        })
+    }
+    
 }
 
 

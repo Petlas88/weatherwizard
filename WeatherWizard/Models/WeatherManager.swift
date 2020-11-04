@@ -15,6 +15,7 @@ protocol WeatherManagerDelegate {
 }
 
 struct WeatherManager {
+    
     let weatherUrl = "https://api.met.no/weatherapi/locationforecast/2.0/compact.json?"
     
     var delegate: WeatherManagerDelegate?
@@ -71,17 +72,21 @@ struct WeatherManager {
             //  Location coordinates (for MapWeather)
             let latitude = String(decodedData.geometry.coordinates[1])
             let longitude = String(decodedData.geometry.coordinates[0])
-            //  Time (for Home screen)
-            let time = decodedData.properties.timeseries[1].time
-//            Timeseries (for Home screen)
-//            var timeseries: [Timeseries] = []
-//            for timesery in decodedData.properties.timeseries {
-//                if timesery.time.contains("08:00") && timeseries.count < 7 {
-//                    timeseries.append(Timeseries(tim))
-//                }
-//            }
+            //  Timeseries (for Home screen)
+            var timeseries: [Weekday] = []
             
-            let weather = WeatherModel(temperature: temperature, oneHourCondition: oneHourCondition, oneHourRain: oneHourRain, sixHourCondition: sixHourCondition, sixHourRain: sixHourRain, twelveHourCondition: twelveHourCondition, millimeterSurfix: millimeterSurfix, celciusSurfix: celciusSurfix, latitude: latitude, longitude: longitude, time: time)
+            //  Will always append the first index of timeseries, as we can't know at what time the user opens the app
+//            timeseries.append(Weekday(day: decodedData.properties.timeseries[0].time, condition: (decodedData.properties.timeseries[0].data.next6Hours?.summary.symbolCode)!))
+            
+            //  Then we add entries which are for 6 am until the array contains 7 entries
+            for timesery in decodedData.properties.timeseries {
+                
+                if timesery.time.contains("06:00") && timeseries.count < 7 {
+                    timeseries.append(Weekday(day: timesery.time, condition: (timesery.data.next12Hours?.summary.symbolCode)!))
+                }
+            }
+            
+            let weather = WeatherModel(temperature: temperature, oneHourCondition: oneHourCondition, oneHourRain: oneHourRain, sixHourCondition: sixHourCondition, sixHourRain: sixHourRain, twelveHourCondition: twelveHourCondition, millimeterSurfix: millimeterSurfix, celciusSurfix: celciusSurfix, latitude: latitude, longitude: longitude, weekdays: timeseries)
             
             return weather
             

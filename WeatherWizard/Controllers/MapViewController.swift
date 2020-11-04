@@ -22,7 +22,6 @@ class MapViewController: UIViewController{
     var forecastViewController = ForecastViewController()
     var locationManager = CLLocationManager()
     
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         

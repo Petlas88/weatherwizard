@@ -12,12 +12,9 @@ struct Helpers {
     
     func dateStringToDay(dateString: String) -> String {
         
-        let timeRemovedT = dateString.replacingOccurrences(of: "T", with: " ")
-        let formattedTime = timeRemovedT.replacingOccurrences(of: "Z", with: ".0")
-        
         let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss.A"
-        let date = dateFormatter.date(from: formattedTime)!
+        dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZ"
+        let date = dateFormatter.date(from: dateString)!
         dateFormatter.dateFormat = "cccc"
         dateFormatter.locale = Locale(identifier: "no_NO")
         let weekday = dateFormatter.string(from: date)
@@ -25,9 +22,4 @@ struct Helpers {
         return weekday.capitalized
     }
     
-}
-
-//MARK: - StringProtocol extension
-extension StringProtocol {
-    var firstCapitalized: String { prefix(1).capitalized + dropFirst() }
 }

@@ -10,6 +10,7 @@ struct K {
     static let cellIdentifier = "ReusableCell"
     static let cellNibName = "ForecastCell"
     static let mapWeatherName = "MapWeather"
+    static let entityName = "DailyWeather"
     
     
     //    Symbol codes from API

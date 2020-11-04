@@ -101,7 +101,7 @@
                                 <rect key="frame" x="60" y="302" width="294" height="290.5"/>
                                 <color key="tintColor" name="dayViewColor"/>
                                 <constraints>
-                                    <constraint firstAttribute="width" secondItem="rTK-XL-TUP" secondAttribute="height" multiplier="15:15" id="CVQ-GT-8S3"/>
+                                    <constraint firstAttribute="width" secondItem="rTK-XL-TUP" secondAttribute="height" multiplier="1:1" id="CVQ-GT-8S3"/>
                                 </constraints>
                             </imageView>
                         </subviews>
