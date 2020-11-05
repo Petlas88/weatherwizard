@@ -77,6 +77,7 @@ struct WeatherManager {
             
             //  Will always append the first index of timeseries, as we can't know at what time the user opens the app
             timeseries.append(Weekday(day: decodedData.properties.timeseries[0].time, condition: (decodedData.properties.timeseries[0].data.next6Hours?.summary.symbolCode)!))
+          
             
             //  Then we add entries which are for 6 am until the array contains 7 entries
             for timesery in decodedData.properties.timeseries {

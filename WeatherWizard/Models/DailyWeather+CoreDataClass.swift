@@ -2,7 +2,7 @@
 //  DailyWeather+CoreDataClass.swift
 //  WeatherWizard
 //
-//  Created by Lasse Pettersen on 03/11/2020.
+//  Created by Lasse Pettersen on 05/11/2020.
 //
 //
 

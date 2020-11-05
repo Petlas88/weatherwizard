@@ -22,4 +22,15 @@ struct Helpers {
         return weekday.capitalized
     }
     
+    func dateTimeString() -> String {
+        let date = Date()
+        let dateFormatter = DateFormatter()
+        dateFormatter.timeStyle = .short
+        dateFormatter.dateStyle = .short
+        dateFormatter.locale = Locale(identifier: "no_NO")
+        let dateString = dateFormatter.string(from: date)
+        
+        return dateString
+    }
+    
 }

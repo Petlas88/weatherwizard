@@ -5,8 +5,9 @@
         <attribute name="day" attributeType="String"/>
         <attribute name="iconName" attributeType="String"/>
         <attribute name="sortId" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="updateTime" attributeType="String"/>
     </entity>
     <elements>
-        <element name="DailyWeather" positionX="-63" positionY="-18" width="128" height="103"/>
+        <element name="DailyWeather" positionX="-63" positionY="-18" width="128" height="118"/>
     </elements>
 </model>

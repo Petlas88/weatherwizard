@@ -2,7 +2,7 @@
 //  DailyWeather+CoreDataProperties.swift
 //  WeatherWizard
 //
-//  Created by Lasse Pettersen on 03/11/2020.
+//  Created by Lasse Pettersen on 05/11/2020.
 //
 //
 
@@ -17,6 +17,7 @@ extension DailyWeather {
     }
 
     @NSManaged public var advice: String?
+    @NSManaged public var updateTime: String?
     @NSManaged public var day: String?
     @NSManaged public var iconName: String?
     @NSManaged public var sortId: Int64

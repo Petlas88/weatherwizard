@@ -69,9 +69,12 @@ class HomeViewController: UIViewController {
                 
             }
         }
-        dayLabel.text = dailyWeather[swipeCount].day
-        adviceLabel.text = dailyWeather[swipeCount].advice
-        weatherIcon.image = UIImage(systemName: dailyWeather[swipeCount].iconName!)
+        DispatchQueue.main.asyncAfter(deadline: .now()+0.2, execute: {
+            self.dayLabel.text = self.dailyWeather[self.swipeCount].day
+            self.adviceLabel.text = self.dailyWeather[self.swipeCount].advice
+            self.weatherIcon.image = UIImage(systemName: self.dailyWeather[self.swipeCount].iconName!)
+        })
+        
     }
     
     @objc func iconTapped() {
@@ -94,11 +97,13 @@ class HomeViewController: UIViewController {
                     self.adviceLabel.text = self.dailyWeather[0].advice
                     self.dayLabel.text = self.dailyWeather[0].day
                     self.weatherIcon.image = UIImage(systemName: self.dailyWeather[0].iconName!)
+                    self.updatedLabel.text = "Sist oppdatert: \(self.dailyWeather[0].updateTime!)"
                 }
             } else {
                 self.adviceLabel.text = "Ingen data"
                 self.dayLabel.text = "Ingen data"
                 self.weatherIcon.image = UIImage(systemName: "exclamationmark.icloud.fill")
+                self.updatedLabel.text = "Ikke oppdatert"
             }
           
         } catch {
@@ -126,6 +131,8 @@ extension HomeViewController: WeatherManagerDelegate {
             
             newDay.sortId = counter
             newDay.day = helpers.dateStringToDay(dateString: weekday.day)
+            newDay.updateTime = helpers.dateTimeString()
+            
             
             // Added sleet to show rain. Because water from the skies == rain
             if weekday.condition.contains("rain") || weekday.condition.contains("sleet") {
