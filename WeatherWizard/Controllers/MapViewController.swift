@@ -33,6 +33,8 @@ class MapViewController: UIViewController{
         let longTapGesture = UILongPressGestureRecognizer(target: self, action: #selector(didLongPress))
         mapView.addGestureRecognizer(longTapGesture)
         
+        locationManager.requestWhenInUseAuthorization()
+        locationManager.startUpdatingLocation()
         locationManager.desiredAccuracy = kCLLocationAccuracyBest
         locationManager.startUpdatingLocation()
         

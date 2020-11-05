@@ -2,6 +2,8 @@
 //  ViewController.swift
 //  WeatherWizard
 //
+//  The PageViewController part of this ViewController was developed watching a youtube tutorial.
+//  Link to tutorial: https://www.youtube.com/watch?v=hIMRn_LdvOg&t=1257s
 
 
 import UIKit
@@ -11,21 +13,14 @@ import CoreData
 
 class HomeViewController: UIViewController {
     
-    @IBOutlet weak var dayLabel: UILabel!
-    @IBOutlet weak var adviceLabel: UILabel!
-    @IBOutlet weak var weatherIcon: UIImageView!
-    @IBOutlet weak var drop1: UIImageView!
-    @IBOutlet weak var drop2: UIImageView!
-    @IBOutlet weak var drop3: UIImageView!
-    @IBOutlet weak var drop4: UIImageView!
-    @IBOutlet weak var updatedLabel: UILabel!
+    @IBOutlet weak var weatherView: UIView!
     
+    var dataSource: [Day] = []
+    var currentViewControllerIndex = 0
     let locationManager = CLLocationManager()
     var weatherManager = WeatherManager()
     var helpers = Helpers()
     var dailyWeather: [DailyWeather] = []
-    var swipeCount = 0
-    
     
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     
@@ -40,74 +35,83 @@ class HomeViewController: UIViewController {
         locationManager.requestWhenInUseAuthorization()
         locationManager.startUpdatingLocation()
         
-        let swipeRight = UISwipeGestureRecognizer(target: self, action: #selector(self.didSwipe(sender: )))
-        swipeRight.direction = UISwipeGestureRecognizer.Direction.right
-        
-        let swipeLeft = UISwipeGestureRecognizer(target: self, action: #selector(self.didSwipe(sender: )))
-        swipeLeft.direction = UISwipeGestureRecognizer.Direction.left
-        
-        view.addGestureRecognizer(swipeRight)
-        view.addGestureRecognizer(swipeLeft)
-        
-        let tapRecognizer = UITapGestureRecognizer(target: self, action: #selector(iconTapped))
-        weatherIcon.addGestureRecognizer(tapRecognizer)
-        weatherIcon.isUserInteractionEnabled = true
-        
     }
     
-    @objc func didSwipe(sender: UISwipeGestureRecognizer) {
+    func configurePageViewController() {
+        guard let pageViewController = storyboard?.instantiateViewController(identifier: String(describing: HomePageViewController.self)) as? HomePageViewController else {return}
         
-        if sender.state == .ended {
-            switch sender.direction {
-            case .right:
-                slideRight()
-                swipeCount > 0 ? swipeCount -= 1 : nil
-                
-            default:
-                slideLeft()
-                swipeCount < dailyWeather.count - 1 ? swipeCount += 1 : nil
-                
-            }
+        let proxy = UIPageControl.appearance()
+        proxy.pageIndicatorTintColor = #colorLiteral(red: 0.6000000238, green: 0.6000000238, blue: 0.6000000238, alpha: 1)
+        proxy.currentPageIndicatorTintColor = #colorLiteral(red: 0.2549019754, green: 0.2745098174, blue: 0.3019607961, alpha: 1)
+        
+        pageViewController.delegate = self
+        pageViewController.dataSource = self
+        
+        addChild(pageViewController)
+        pageViewController.didMove(toParent: self)
+        
+        pageViewController.view.translatesAutoresizingMaskIntoConstraints = false
+        
+        weatherView.addSubview(pageViewController.view)
+        
+        let views: [String: Any] = ["pageView": pageViewController.view!]
+        
+        weatherView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|-0-[pageView]-0-|", options: NSLayoutConstraint.FormatOptions(rawValue: 0), metrics: nil, views: views))
+        
+        weatherView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-0-[pageView]-0-|", options: NSLayoutConstraint.FormatOptions(rawValue: 0), metrics: nil, views: views))
+        
+        
+        guard let startingViewController = detailViewControllerAt(index: currentViewControllerIndex) else {
+            return
+            
         }
-        DispatchQueue.main.asyncAfter(deadline: .now()+0.2, execute: {
-            self.dayLabel.text = self.dailyWeather[self.swipeCount].day
-            self.adviceLabel.text = self.dailyWeather[self.swipeCount].advice
-            self.weatherIcon.image = UIImage(systemName: self.dailyWeather[self.swipeCount].iconName!)
-        })
         
+        pageViewController.setViewControllers([startingViewController], direction: .forward, animated: true)
     }
     
-    @objc func iconTapped() {
-        if !iconHasSpun {
-            rotateIcon()
-        } else {
-            scaleIcon()
+    func detailViewControllerAt(index: Int) -> DayViewController? {
+        if index >= dataSource.count || dataSource.count == 0 {
+            return nil
         }
+        
+        guard let dayViewController = storyboard?.instantiateViewController(identifier: String(describing: DayViewController.self)) as? DayViewController else {
+            return nil
+        }
+        
+        dayViewController.index = index
+        
+        //  Checking additional array (dataSource) to be able to add "error" page. Could've gotten the data straight from Core Data. But PageViewController makes it difficult to add formentioned page that way.
+        
+            dayViewController.dayName = self.dataSource[index].dayName
+            dayViewController.iconName = self.dataSource[index].iconName
+            dayViewController.message = self.dataSource[index].message
+            dayViewController.updateTime = "Sist oppdatert: \(self.dataSource[index].updateTime)"
+
+        return dayViewController
     }
     
-    func fetchDailyWeather() {
+    func fetchStoredWeather() {
         do{
             let request = DailyWeather.fetchRequest() as NSFetchRequest<DailyWeather>
             let sort = NSSortDescriptor(key: "sortId", ascending: true)
             request.sortDescriptors = [sort]
             self.dailyWeather =  try self.context.fetch(request)
             
-            if dailyWeather != [] {
-                DispatchQueue.main.async {
-                    self.adviceLabel.text = self.dailyWeather[0].advice
-                    self.dayLabel.text = self.dailyWeather[0].day
-                    self.weatherIcon.image = UIImage(systemName: self.dailyWeather[0].iconName!)
-                    self.updatedLabel.text = "Sist oppdatert: \(self.dailyWeather[0].updateTime!)"
+            // Pushing to additional array (dataSource) and add an instance of struct Day to be able to add "error" page if no data is found and there's no internet connection
+            if !dailyWeather.isEmpty {
+                for day in dailyWeather {
+                    dataSource.append(Day(dayName: day.day!, message: day.advice!, iconName: day.iconName!, updateTime: "Sist oppdatert: \(day.updateTime!)" ))
                 }
             } else {
-                self.adviceLabel.text = "Ingen data"
-                self.dayLabel.text = "Ingen data"
-                self.weatherIcon.image = UIImage(systemName: "exclamationmark.icloud.fill")
-                self.updatedLabel.text = "Ikke oppdatert"
+                dataSource.append(Day(dayName: "Ingen data", message: "Ingen data", iconName: "exclamationmark.icloud.fill", updateTime: "Ikke oppdatert"))
             }
-          
+            
         } catch {
             print("Could not retrieve stored data")
+        }
+        
+        DispatchQueue.main.async {
+            self.configurePageViewController()
         }
     }
 }
@@ -133,9 +137,8 @@ extension HomeViewController: WeatherManagerDelegate {
             newDay.day = helpers.dateStringToDay(dateString: weekday.day)
             newDay.updateTime = helpers.dateTimeString()
             
-            
             // Added sleet to show rain. Because water from the skies == rain
-            if weekday.condition.contains("rain") || weekday.condition.contains("sleet") {
+            if weekday.condition.contains("rain") || weekday.condition.contains("sleet") || weekday.condition.contains("cloud") {
                 newDay.iconName = "umbrella.fill"
                 newDay.advice = "Det blir regn i dag, ta med paraply! ☔️"
             } else {
@@ -151,7 +154,7 @@ extension HomeViewController: WeatherManagerDelegate {
             print("There was an error saving data")
         }
         
-        self.fetchDailyWeather()
+        self.fetchStoredWeather()
     }
     
     func didFailWithError(error: Error) {
@@ -162,7 +165,7 @@ extension HomeViewController: WeatherManagerDelegate {
             
             self.present(alert, animated: true, completion: nil)
             
-            self.fetchDailyWeather()
+            self.fetchStoredWeather()
         }
     }
 }
@@ -183,82 +186,57 @@ extension HomeViewController: CLLocationManagerDelegate {
     }
 }
 
-//MARK: - Animations
-extension HomeViewController {
-    func slideRight() {
-        if swipeCount > 0 {
-            UIView.animate(withDuration: 0.2, delay: 0, animations: { () -> Void in
-                self.view.transform = CGAffineTransform(translationX: self.view.bounds.width, y: 200)
-                self.view.alpha = 0
-            }, completion: {_ in
-                UIView.animate(withDuration: 0.1, delay: 0, animations: {() -> Void in
-                    self.view.transform = CGAffineTransform(translationX: -self.view.bounds.width, y: 200)
-                }, completion: {_ in
-                    UIView.animate(withDuration: 0.2, animations: {() -> Void in
-                        self.view.transform = CGAffineTransform(translationX: self.view.bounds.width - self.view.bounds.width, y: 0)
-                        self.view.alpha = 1
-                    })
-                })
-            })
-        } else {
-            UIView.animate(withDuration: 0.2, delay: 0, options: [UIView.AnimationOptions.curveEaseInOut], animations: { () -> Void in
-                self.view.transform = CGAffineTransform(translationX: 50, y: 0)
-            } )
-            UIView.animate(withDuration: 0.2, delay: 0.2, options: [UIView.AnimationOptions.curveEaseInOut], animations: { () -> Void in
-                self.view.transform = CGAffineTransform(translationX: 0, y: 0)
-            } )
-            
+//MARK: - PageViewController
+
+extension HomeViewController: UIPageViewControllerDelegate, UIPageViewControllerDataSource {
+    
+    func presentationIndex(for pageViewController: UIPageViewController) -> Int {
+        return currentViewControllerIndex
+    }
+    
+    func presentationCount(for pageViewController: UIPageViewController) -> Int {
+        dataSource.count
+    }
+    
+    func pageViewController(_ pageViewController: UIPageViewController, viewControllerBefore viewController: UIViewController) -> UIViewController? {
+        
+        let dayViewController = viewController as? DayViewController
+        
+        guard var currentIndex = dayViewController?.index else {
+            return nil
         }
-    }
-    
-    func slideLeft()  {
-        if swipeCount != dailyWeather.count - 1{
-            UIView.animate(withDuration: 0.2, delay: 0, animations: { () -> Void in
-                self.view.transform = CGAffineTransform(translationX: -self.view.bounds.width, y: 200)
-                self.view.alpha = 0
-            }, completion: {_ in
-                UIView.animate(withDuration: 0, delay: 0, animations: {() -> Void in
-                    self.view.transform = CGAffineTransform(translationX: +self.view.bounds.width, y: 200)
-                }, completion: {_ in
-                    UIView.animate(withDuration: 0.2, animations: {() -> Void in
-                        self.view.transform = CGAffineTransform(translationX: self.view.bounds.width - self.view.bounds.width, y: 0)
-                        self.view.alpha = 1
-                    })
-                })
-            })
-        } else {
-            UIView.animate(withDuration: 0.2, delay: 0, options: [UIView.AnimationOptions.curveEaseInOut], animations: { () -> Void in
-                self.view.transform = CGAffineTransform(translationX: -50, y: 0)
-            } )
-            UIView.animate(withDuration: 0.2, delay: 0.2, options: [UIView.AnimationOptions.curveEaseInOut], animations: { () -> Void in
-                self.view.transform = CGAffineTransform(translationX: 0, y: 0)
-            } )
-            
+        
+        currentViewControllerIndex = currentIndex
+        
+        if currentIndex == 0 {
+            return nil
         }
+        
+        currentIndex -= 1
+        
+        return detailViewControllerAt(index: currentIndex)
+        
     }
     
-    func rotateIcon() {
-        UIView.animate(withDuration: 3, delay: 0 , options: UIView.AnimationOptions.autoreverse, animations: { () -> Void in
-            self.weatherIcon.transform = CGAffineTransform(rotationAngle: CGFloat.pi)
-            self.weatherIcon.transform = CGAffineTransform(rotationAngle: CGFloat.pi * 2.0)
-        }, completion: {_ in
-            self.iconHasSpun = true
-        })
+    func pageViewController(_ pageViewController: UIPageViewController, viewControllerAfter viewController: UIViewController) -> UIViewController? {
+        let dayViewController = viewController as? DayViewController
+        
+        guard var currentIndex = dayViewController?.index else {
+            return nil
+        }
+        
+        if currentIndex == dataSource.count {
+            return nil
+        }
+        
+        currentIndex += 1
+        
+        currentViewControllerIndex = currentIndex
+        
+        return detailViewControllerAt(index: currentIndex)
     }
-    
-    func scaleIcon() {
-        UIView.animate(withDuration: 2, animations: {() -> Void in
-            self.weatherIcon.transform = CGAffineTransform(scaleX: 3, y: 3)
-        })
-        UIView.animate(withDuration: 2, delay: 2, options: UIView.AnimationOptions.curveEaseIn, animations: { () -> Void in
-            self.weatherIcon.transform = CGAffineTransform(scaleX: 1, y: 1)
-            
-        }, completion: {_ in
-            self.iconHasSpun = false
-        })
-    }
-    
 }
+
 
 
 
