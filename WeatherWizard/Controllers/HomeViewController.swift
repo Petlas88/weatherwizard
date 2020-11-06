@@ -34,7 +34,6 @@ class HomeViewController: UIViewController {
         
         locationManager.requestWhenInUseAuthorization()
         locationManager.startUpdatingLocation()
-        
     }
     
     func configurePageViewController() {
@@ -85,7 +84,7 @@ class HomeViewController: UIViewController {
             dayViewController.dayName = self.dataSource[index].dayName
             dayViewController.iconName = self.dataSource[index].iconName
             dayViewController.message = self.dataSource[index].message
-            dayViewController.updateTime = "Sist oppdatert: \(self.dataSource[index].updateTime)"
+            dayViewController.updateTime = self.dataSource[index].updateTime
 
         return dayViewController
     }
@@ -107,7 +106,7 @@ class HomeViewController: UIViewController {
             }
             
         } catch {
-            print("Could not retrieve stored data")
+            print("Could not retrieve stored data: \(error)")
         }
         
         DispatchQueue.main.async {
@@ -127,7 +126,7 @@ extension HomeViewController: WeatherManagerDelegate {
         do {
             try context.execute(batchDeleteRequest)
         } catch {
-            print("There was an error deleting data")
+            print("There was an error deleting data \(error)")
         }
         var counter: Int64 = 0
         for weekday in weather.weekdays {
@@ -138,12 +137,12 @@ extension HomeViewController: WeatherManagerDelegate {
             newDay.updateTime = helpers.dateTimeString()
             
             // Added sleet to show rain. Because water from the skies == rain
-            if weekday.condition.contains("rain") || weekday.condition.contains("sleet") || weekday.condition.contains("cloud") {
+            if weekday.condition.contains("rain") || weekday.condition.contains("sleet") {
                 newDay.iconName = "umbrella.fill"
-                newDay.advice = "Det blir regn i dag, ta med paraply! ☔️"
+                newDay.advice = "Det blir regn, ta med paraply! ☔️"
             } else {
                 newDay.iconName = "sun.max.fill"
-                newDay.advice = "Ikke noe regn i dag, la paraplyen bli hjemme! ☀️"
+                newDay.advice = "Ikke noe regn, la paraplyen bli hjemme! ☀️"
             }
             counter += 1
         }
@@ -151,7 +150,7 @@ extension HomeViewController: WeatherManagerDelegate {
         do {
             try self.context.save()
         } catch {
-            print("There was an error saving data")
+            print("There was an error saving data: \(error)")
         }
         
         self.fetchStoredWeather()

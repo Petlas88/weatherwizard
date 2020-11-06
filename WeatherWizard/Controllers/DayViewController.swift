@@ -78,7 +78,8 @@ class DayViewController: UIViewController {
                     self.view.backgroundColor = #colorLiteral(red: 0.9686274529, green: 0.78039217, blue: 0.3450980484, alpha: 1)
                 })
             })
-        } else {
+        }
+        if iconName == "umbrella.fill" {
             drop1Image.isHidden = false
             drop2Image.isHidden = false
             drop3Image.isHidden = false
@@ -95,7 +96,6 @@ class DayViewController: UIViewController {
             }, completion: {_ in
                 UIView.animate(withDuration: 1, delay: 0, options: .repeat, animations: {
                     self.drop1Image.transform = CGAffineTransform(translationX: 0, y: self.view.frame.height)
-                    self.drop1Image.alpha = 0.0
                 })
             })
            
@@ -104,7 +104,6 @@ class DayViewController: UIViewController {
             }, completion: {_ in
                 UIView.animate(withDuration: 1, delay: 0.8, options: [.repeat, .curveLinear], animations: {
                     self.drop2Image.transform = CGAffineTransform(translationX: 0, y: self.view.frame.height)
-                    self.drop2Image.alpha = 0
                 })
             })
             
@@ -113,7 +112,6 @@ class DayViewController: UIViewController {
             }, completion: {_ in
                 UIView.animate(withDuration: 0.7, delay: 0, options: [.repeat, .curveLinear], animations: {
                     self.drop3Image.transform = CGAffineTransform(translationX: 0, y: self.view.frame.height)
-                    self.drop3Image.alpha = 0
                 })
             })
             
@@ -122,7 +120,6 @@ class DayViewController: UIViewController {
             }, completion: {_ in
                 UIView.animate(withDuration: 1.4, delay: 0, options: [.repeat, .curveLinear], animations: {
                     self.drop4Image.transform = CGAffineTransform(translationX: 0, y: self.view.frame.height)
-                    self.drop4Image.alpha = 0
                 })
             })
             
@@ -131,7 +128,6 @@ class DayViewController: UIViewController {
             }, completion: {_ in
                 UIView.animate(withDuration: 1.3, delay: 0, options: [.repeat, .curveLinear], animations: {
                     self.drop5Image.transform = CGAffineTransform(translationX: 0, y: self.view.frame.height)
-                    self.drop5Image.alpha = 0
                 })
             })
             
@@ -140,7 +136,6 @@ class DayViewController: UIViewController {
             }, completion: {_ in
                 UIView.animate(withDuration: 1.2, delay: 0, options: [.repeat, .curveLinear], animations: {
                     self.drop6Image.transform = CGAffineTransform(translationX: 0, y: self.view.frame.height)
-                    self.drop6Image.alpha = 0
                 })
             })
         }

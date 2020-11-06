@@ -84,7 +84,7 @@ struct WeatherManager {
                 let timeSeryDate = timesery.time.split(separator: "T")[0]
                 let inArray: Bool = (timeSeryDate == timeseries[0].day.split(separator: "T")[0])
                 if timesery.time.contains("06:00") && !inArray && timeseries.count < 7 {
-                    timeseries.append(Weekday(day: timesery.time, condition: (timesery.data.next12Hours?.summary.symbolCode)!))
+                    timeseries.append(Weekday(day: timesery.time, condition: (timesery.data.next6Hours?.summary.symbolCode)!))
                 }
             }
             
