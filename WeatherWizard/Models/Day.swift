@@ -2,8 +2,7 @@
 //  Day.swift
 //  WeatherWizard
 //
-//  Created by Lasse Pettersen on 05/11/2020.
-//
+
 
 import Foundation
 

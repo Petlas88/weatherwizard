@@ -2,7 +2,10 @@
 //  ViewController.swift
 //  WeatherWizard
 //
-//  The PageViewController part of this ViewController was developed watching a youtube tutorial.
+//  Core Data functionality was developed watching a Youtube series
+//  Link to tutorial: https://www.youtube.com/watch?v=6XASUd7h5-s
+//
+//  The PageViewController part of this ViewController was developed watching a Youtube tutorial.
 //  Link to tutorial: https://www.youtube.com/watch?v=hIMRn_LdvOg&t=1257s
 
 
@@ -23,8 +26,6 @@ class HomeViewController: UIViewController {
     var dailyWeather: [DailyWeather] = []
     
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
-    
-    var iconHasSpun = false
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -81,35 +82,40 @@ class HomeViewController: UIViewController {
         
         //  Checking additional array (dataSource) to be able to add "error" page. Could've gotten the data straight from Core Data. But PageViewController makes it difficult to add formentioned page that way.
         
-            dayViewController.dayName = self.dataSource[index].dayName
-            dayViewController.iconName = self.dataSource[index].iconName
-            dayViewController.message = self.dataSource[index].message
-            dayViewController.updateTime = self.dataSource[index].updateTime
-
+        dayViewController.dayName = self.dataSource[index].dayName
+        dayViewController.iconName = self.dataSource[index].iconName
+        dayViewController.message = self.dataSource[index].message
+        dayViewController.updateTime = self.dataSource[index].updateTime
+        
         return dayViewController
     }
     
     func fetchStoredWeather() {
-        do{
-            let request = DailyWeather.fetchRequest() as NSFetchRequest<DailyWeather>
-            let sort = NSSortDescriptor(key: "sortId", ascending: true)
-            request.sortDescriptors = [sort]
-            self.dailyWeather =  try self.context.fetch(request)
-            
-            // Pushing to additional array (dataSource) and add an instance of struct Day to be able to add "error" page if no data is found and there's no internet connection
-            if !dailyWeather.isEmpty {
-                for day in dailyWeather {
-                    dataSource.append(Day(dayName: day.day!, message: day.advice!, iconName: day.iconName!, updateTime: "Sist oppdatert: \(day.updateTime!)" ))
-                }
+        //  Using context.perform to make sure fetching, insertion to dataSource and setup of PageViewController happens on main thread. Had an issue where the app crashed due to attempting to insert nil, when in reality there was no nil. As I investigated the problem I came to understand that it was a threading problem and this seems to have solved the problem.
+        context.perform {
+            if Thread.isMainThread {
+                print("fetch on main")
             } else {
-                dataSource.append(Day(dayName: "Ingen data", message: "Ingen data", iconName: "exclamationmark.icloud.fill", updateTime: "Ikke oppdatert"))
+                print("fetch off main")
             }
-            
-        } catch {
-            print("Could not retrieve stored data: \(error)")
-        }
-        
-        DispatchQueue.main.async {
+            do{
+                let request = DailyWeather.fetchRequest() as NSFetchRequest<DailyWeather>
+                let sort = NSSortDescriptor(key: "sortId", ascending: true)
+                request.sortDescriptors = [sort]
+                self.dailyWeather =  try self.context.fetch(request)
+                
+                //  Pushing to additional array (dataSource) and add an instance of struct Day to be able to add "error" page if no data is found and there's no internet connection
+                if !self.dailyWeather.isEmpty {
+                    for day in self.dailyWeather {
+                        self.dataSource.append(Day(dayName: day.day!, message: day.advice!, iconName: day.iconName!, updateTime: "Sist oppdatert: \(day.updateTime!)" ))
+                    }
+                } else {
+                    self.dataSource.append(Day(dayName: "Ingen data", message: "Ingen data", iconName: "exclamationmark.icloud.fill", updateTime: "Ikke oppdatert"))
+                }
+                
+            } catch {
+                print("Could not retrieve stored data: \(error)")
+            }
             self.configurePageViewController()
         }
     }
@@ -128,32 +134,43 @@ extension HomeViewController: WeatherManagerDelegate {
         } catch {
             print("There was an error deleting data \(error)")
         }
-        var counter: Int64 = 0
-        for weekday in weather.weekdays {
-            let newDay = DailyWeather(context: self.context)
-            
-            newDay.sortId = counter
-            newDay.day = helpers.dateStringToDay(dateString: weekday.day)
-            newDay.updateTime = helpers.dateTimeString()
-            
-            // Added sleet to show rain. Because water from the skies == rain
-            if weekday.condition.contains("rain") || weekday.condition.contains("sleet") {
-                newDay.iconName = "umbrella.fill"
-                newDay.advice = "Det blir regn, ta med paraply! ☔️"
+        
+        //  Using DispatchQueue.global to perform insertion to Core Data async on background thread. Had an issue where the app crashed due to attempting to insert nil, when in reality there was no nil. As I investigated the problem I came to understand that it was a threading problem and this seems to have solved the problem.
+        DispatchQueue.global(qos: .background).async {
+            if Thread.isMainThread {
+                print("main")
             } else {
-                newDay.iconName = "sun.max.fill"
-                newDay.advice = "Ikke noe regn, la paraplyen bli hjemme! ☀️"
+                print("off main")
             }
-            counter += 1
+            var counter: Int64 = 0
+            for weekday in weather.weekdays {
+                print(weekday)
+                let newDay = DailyWeather(context: self.context)
+                
+                newDay.sortId = counter
+                newDay.updateTime = self.helpers.dateTimeString()
+                newDay.day = self.helpers.dateStringToDay(dateString: weekday.day)
+                
+                
+                // Added sleet to show rain. Because water from the skies == rain
+                if weekday.condition.contains("rain") || weekday.condition.contains("sleet") {
+                    newDay.iconName = "umbrella.fill"
+                    newDay.advice = "Det blir regn, ta med paraply! ☔️"
+                } else {
+                    newDay.iconName = "sun.max.fill"
+                    newDay.advice = "Ikke noe regn, la paraplyen bli hjemme! ☀️"
+                }
+                counter += 1
+            }
+            do {
+                try self.context.save()
+            } catch {
+                print("There was an error saving data: \(error)")
+            }
+            self.fetchStoredWeather()
         }
         
-        do {
-            try self.context.save()
-        } catch {
-            print("There was an error saving data: \(error)")
-        }
         
-        self.fetchStoredWeather()
     }
     
     func didFailWithError(error: Error) {

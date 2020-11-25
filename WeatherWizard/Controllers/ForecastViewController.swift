@@ -32,8 +32,8 @@ class ForecastViewController: UIViewController {
         tableView.register(UINib(nibName: K.cellNibName, bundle: nil), forCellReuseIdentifier: K.cellIdentifier)
         
         let tabbar = tabBarController as! MainTabBarController
-        //        Calling fetchWeather here to not update everytime view appears.
-        //        Also checking that user has not fetched current location (lat/lon from tab bar == nil) to not overwrite
+        // Calling fetchWeather here to not update everytime view appears.
+        // Also checking that user has not fetched current location (lat/lon from tab bar == nil) to not overwrite
         if tabbar.tabBarLat == nil || tabbar.tabBarLon == nil {
             weatherManager.fetchWeather(lat: 59.911166, lon: 10.744810)
             locationLabel.text = "Høyskolen Kristiania"
@@ -45,7 +45,7 @@ class ForecastViewController: UIViewController {
         super.viewDidAppear(animated)
         
         let tabbar = tabBarController as! MainTabBarController
-        //        Weather should not be fetched if coordinate from map is allready shown or if coordinates in MainTabBarController == nil
+        // Weather should not be fetched if coordinate from map is allready shown or if coordinates in MainTabBarController == nil
         if tabbar.tabBarLat != nil, tabbar.tabBarLon != nil, !showingLocalWeather {
             forecasts = []
             showingLocalWeather = true

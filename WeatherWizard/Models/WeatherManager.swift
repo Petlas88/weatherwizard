@@ -34,13 +34,11 @@ struct WeatherManager {
             
             let task = session.dataTask(with: url) { (data, response, error) in
                 if error != nil {
-                    //Needed the self. notation in the past, seems to be working fine without it now (Swift 5, Xcode 12.1), left self. in anyway
                     self.delegate?.didFailWithError(error: error!)
                     return
                 }
                 
                 if let safeData = data {
-                    //Needed the self. notation in the past, seems to be working fine without it now (Swift 5, Xcode 12.1), left self. in anyway
                     if let weather = parseJSON(safeData) {
                         self.delegate?.didUpdateWeather(self, weather: weather)
                     }

@@ -2,8 +2,6 @@
 //  DayViewController.swift
 //  WeatherWizard
 //
-//  Created by Lasse Pettersen on 05/11/2020.
-//
 
 import UIKit
 
@@ -41,8 +39,7 @@ class DayViewController: UIViewController {
         drop5Image.isHidden = true
         drop6Image.isHidden = true
         
-        
-        // Do any additional setup after loading the view.
+       
         let tapRecognizer = UITapGestureRecognizer(target: self, action: #selector(iconTapped))
         conditionImage.addGestureRecognizer(tapRecognizer)
         conditionImage.isUserInteractionEnabled = true

@@ -27,7 +27,7 @@ class MapViewController: UIViewController{
         
         mapView.delegate = self
         locationManager.delegate = self
-    
+        
         mapView.showsUserLocation = true
         
         let longTapGesture = UILongPressGestureRecognizer(target: self, action: #selector(didLongPress))
@@ -43,10 +43,11 @@ class MapViewController: UIViewController{
         
         
     }
-        
+    
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         
+        // Putting the coordinate of the user in the TabBarController so that I can send them to ForecastViewController
         let tabbar = tabBarController as! MainTabBarController
         tabbar.tabBarLat = userLocation.coordinate.latitude
         tabbar.tabBarLon = userLocation.coordinate.longitude
@@ -128,7 +129,7 @@ extension MapViewController: MKMapViewDelegate {
         mapWeather.locationDidChange(lat: location.latitude, lon: location.longitude)
     }
     
-   
+    
 }
 
 
