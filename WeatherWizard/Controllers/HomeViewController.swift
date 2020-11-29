@@ -22,8 +22,9 @@ class HomeViewController: UIViewController {
     var currentViewControllerIndex = 0
     let locationManager = CLLocationManager()
     var weatherManager = WeatherManager()
-    var helpers = Helpers()
     var dailyWeather: [DailyWeather] = []
+    var userLat: CLLocationDegrees = 0.0
+    var userLon: CLLocationDegrees = 0.0
     
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     
@@ -93,11 +94,6 @@ class HomeViewController: UIViewController {
     func fetchStoredWeather() {
         //  Using context.perform to make sure fetching, insertion to dataSource and setup of PageViewController happens on main thread. Had an issue where the app crashed due to attempting to insert nil, when in reality there was no nil. As I investigated the problem I came to understand that it was a threading problem and this seems to have solved the problem.
         context.perform {
-            if Thread.isMainThread {
-                print("fetch on main")
-            } else {
-                print("fetch off main")
-            }
             do{
                 let request = DailyWeather.fetchRequest() as NSFetchRequest<DailyWeather>
                 let sort = NSSortDescriptor(key: "sortId", ascending: true)
@@ -124,32 +120,26 @@ class HomeViewController: UIViewController {
 //MARK: - WeatherManagerDelegate
 
 extension HomeViewController: WeatherManagerDelegate {
-    
-    func didUpdateWeather(_ weatherManager: WeatherManager, weather: WeatherModel) {
-        
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "DailyWeather")
-        let batchDeleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
-        do {
-            try context.execute(batchDeleteRequest)
-        } catch {
-            print("There was an error deleting data \(error)")
-        }
+        func didUpdateWeather(_ weatherManager: WeatherManager, weather: WeatherModel) {
+            let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "DailyWeather")
+            let batchDeleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
+            do {
+                try self.context.execute(batchDeleteRequest)
+            } catch {
+                print("There was an error deleting data \(error)")
+            }
         
         //  Using DispatchQueue.global to perform insertion to Core Data async on background thread. Had an issue where the app crashed due to attempting to insert nil, when in reality there was no nil. As I investigated the problem I came to understand that it was a threading problem and this seems to have solved the problem.
         DispatchQueue.global(qos: .background).async {
-            if Thread.isMainThread {
-                print("main")
-            } else {
-                print("off main")
-            }
+           
             var counter: Int64 = 0
             for weekday in weather.weekdays {
-                print(weekday)
+           
                 let newDay = DailyWeather(context: self.context)
                 
                 newDay.sortId = counter
-                newDay.updateTime = self.helpers.dateTimeString()
-                newDay.day = self.helpers.dateStringToDay(dateString: weekday.day)
+                newDay.updateTime = Helpers.dateTimeString()
+                newDay.day = Helpers.dateStringToDay(dateString: weekday.day)
                 
                 
                 // Added sleet to show rain. Because water from the skies == rain
@@ -193,7 +183,12 @@ extension HomeViewController: CLLocationManagerDelegate {
         
         if let location = locations.first {
             locationManager.stopUpdatingLocation()
-            weatherManager.fetchWeather(lat: location.coordinate.latitude, lon: location.coordinate.longitude)
+            if location.coordinate.latitude != userLat, location.coordinate.longitude != userLon {
+                weatherManager.fetchWeather(lat: location.coordinate.latitude, lon: location.coordinate.longitude)
+                userLat = location.coordinate.latitude
+                userLon = location.coordinate.longitude
+            }
+
         }
     }
     

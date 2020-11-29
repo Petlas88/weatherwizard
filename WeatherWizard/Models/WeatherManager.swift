@@ -34,12 +34,14 @@ struct WeatherManager {
             
             let task = session.dataTask(with: url) { (data, response, error) in
                 if error != nil {
+                    // self. notation doesn't seem to be needed here anymore (Swift 5, Xcode 12.2), but keeping it anyway
                     self.delegate?.didFailWithError(error: error!)
                     return
                 }
                 
                 if let safeData = data {
                     if let weather = parseJSON(safeData) {
+                    // self. notation doesn't seem to be needed here anymore (Swift 5, Xcode 12.2), but keeping it anyway
                         self.delegate?.didUpdateWeather(self, weather: weather)
                     }
                 }
@@ -75,7 +77,6 @@ struct WeatherManager {
             
             //  Will always append the first index of timeseries, as we can't know at what time the user opens the app
             timeseries.append(Weekday(day: decodedData.properties.timeseries[0].time, condition: (decodedData.properties.timeseries[0].data.next6Hours?.summary.symbolCode)!))
-          
             
             //  Then we add entries which are for 6 am until the array contains 7 entries
             for timesery in decodedData.properties.timeseries {

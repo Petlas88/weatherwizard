@@ -8,7 +8,7 @@ import Foundation
 
 struct Helpers {
     
-    func dateStringToDay(dateString: String) -> String {
+    static func dateStringToDay(dateString: String) -> String {
         
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZ"
@@ -20,7 +20,7 @@ struct Helpers {
         return weekday.capitalized
     }
     
-    func dateTimeString() -> String {
+    static func dateTimeString() -> String {
         let date = Date()
         let dateFormatter = DateFormatter()
         dateFormatter.timeStyle = .short

@@ -62,6 +62,7 @@
 		0974B99E254717CC006BAD8C /* ForecastViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForecastViewController.swift; sourceTree = "<group>"; };
 		0974B9A1254717F0006BAD8C /* MapViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapViewController.swift; sourceTree = "<group>"; };
 		098026EB25501E2300A973BF /* WeatherWizard.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = WeatherWizard.xcdatamodel; sourceTree = "<group>"; };
+		099C2DDD2572D01900BB8D5D /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		09B2D4782551A9D300A95BC7 /* Weekday.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Weekday.swift; sourceTree = "<group>"; };
 		09EB69A12550750300ADD605 /* Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Helpers.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -80,6 +81,7 @@
 		0974B96B2546F9C4006BAD8C = {
 			isa = PBXGroup;
 			children = (
+				099C2DDD2572D01900BB8D5D /* README.md */,
 				0974B9762546F9C4006BAD8C /* WeatherWizard */,
 				0974B9752546F9C4006BAD8C /* Products */,
 			);

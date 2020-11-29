@@ -1,4 +1,4 @@
-
+// This file i created with QuickType (app.quicktype.io) 
 
 import Foundation
 
